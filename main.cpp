@@ -1,13 +1,28 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <experimental/filesystem>
 
-int main(int argc, char **argv)
+namespace fs = std::experimental::filesystem;
+
+int main(int argc, char *argv[])
 {
-  // get the current directory the invoked this program.
-  // look for an *.master file.
-  // process the *.master file settings.
-  // process the *.master file’s imports.
-  // write data to the output file set in the *.master file.
+  std::string ext(".master");
+  for(auto& p: fs::recursive_directory_iterator(fs::current_path())
+  {
+    // look for an *.master file.
+    if(p.path().extension() == ext())
+    {
+      // open *.master file.
+      std::ifstream master_file(p);
+      // process the *.master file settings.
+      
+      // process the *.master file’s imports.
+      
+      // close *.master file.
+      master_file.close();
+      // write data to the output file set in the *.master file.
+    }
+  }
   return 0;
 }
