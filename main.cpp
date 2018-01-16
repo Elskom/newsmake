@@ -17,13 +17,19 @@ int main(int argc, char *argv[])
       std::cout << "Processing " << p.filename() << "..." << std::endl;
       // open *.master file.
       std::ifstream master_file(p);
-      // process the *.master file settings.
-      
-      // process the *.master file’s imports.
-      
+      for (std::string line; std::getline(master_file, line);)
+      {
+        // process the *.master file settings.
+        
+        // process the *.master file’s imports.
+        
+        // open the imported files in the folder name of the import.
+        // get imported files data.
+        // close imported files.
+        // write data to the output file set in the *.master file.
+      }
       // close *.master file.
       master_file.close();
-      // write data to the output file set in the *.master file.
     }
   }
   return 0;
