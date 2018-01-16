@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
     // look for an *.master file.
     if(p.path().extension() == ext())
     {
+      // send processing message to user.
+      std::cout << "Processing " << p.filename() << "..." << std::endl;
       // open *.master file.
       std::ifstream master_file(p);
       // process the *.master file settings.
