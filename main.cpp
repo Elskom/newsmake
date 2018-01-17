@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <string>
 #include <fstream>
 #include <experimental/filesystem>
@@ -10,6 +11,9 @@ int main(int argc, char *argv[])
   std::string ext(".master");
   std::string project_name;
   std::string outputfile_name;
+  bool tabs;
+  bool delete_files;
+  std::vector<std::string> section_data;
   for(auto& p: fs::recursive_directory_iterator(fs::current_path())
   {
     if(p.path().extension() == ext())
@@ -18,17 +22,10 @@ int main(int argc, char *argv[])
       std::ifstream master_file(p);
       for (std::string line; std::getline(master_file, line);)
       {
-        if (line.find("# ") == 0)
-        {
-          // skip the comments in the master file.
-        }
-        else
+        if (line.find("# ") != 0)
         {
           //projname = "Els_kom"
           //genfilename = "../../bin/x86/Release/news.txt"
-          //tabs = true
-          //deletechunkentryfiles = false
-          // process the *.master file’s settings.
           if (line.find("projname = \"") == 0)
           {
             // project name set.
@@ -46,6 +43,22 @@ int main(int argc, char *argv[])
           {
             std::cout << "Error: generated output file name not set." << std::endl;
             return 1;
+          }
+          if (line.find("tabs = ") == 0)
+          {
+            tabs = line.c_str() == "tabs = true";
+          }
+          else
+          {
+            tabs = true;
+          }
+          if (line.find("deletechunkentryfiles = ") == 0)
+          {
+            delete_files = line.c_str() == "deletechunkentryfiles = true";
+          }
+          else
+          {
+            delete_files = true;
           }
           // process the *.master file’s imports.
           
