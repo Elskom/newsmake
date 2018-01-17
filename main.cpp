@@ -4,7 +4,6 @@
 #include <fstream>
 #include <experimental/filesystem>
 
-namespace fs = std::experimental::filesystem;
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
   bool tabs;
   bool delete_files;
   std::vector<std::string> section_data;
-  for(auto& p: fs::recursive_directory_iterator(fs::current_path())
+  for(auto& p: std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path())
   {
     if(p.path().extension() == ext())
     {
@@ -60,8 +59,12 @@ int main(int argc, char *argv[])
           {
             delete_files = true;
           }
-          // process the *.master file’s imports.
-          
+          if (line.find("import \"") == 0)
+          {
+            // an folder was imported we must
+            // recursive loop through all files
+            // in it and open them and process the data.
+          }
           // open the imported files in the folder name of the import.
           
           // get imported files data.
