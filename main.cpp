@@ -23,11 +23,11 @@ int main(int argc, char *argv[])
       {
         if (line.find("# ") != 0)
         {
-          //projname = "Els_kom"
-          //genfilename = "../../bin/x86/Release/news.txt"
           if (line.find("projname = \"") == 0)
           {
-            // project name set.
+            project_name = line;
+            project_name.erase(0, 12);
+            project_name.erase(project_name.length() -1, 1);
           }
           else
           {
@@ -36,7 +36,9 @@ int main(int argc, char *argv[])
           }
           if (line.find("genfilename = \"") == 0)
           {
-            // generated output file name set.
+            outputfile_name = line;
+            outputfile_name.erase(0, 15);
+            outputfile_name.erase(outputfile_name.length() -1, 1);
           }
           else
           {
@@ -61,6 +63,10 @@ int main(int argc, char *argv[])
           }
           if (line.find("import \"") == 0)
           {
+            std::string imported_folder = line;
+            // get the import folder name stripping the extra stuff.
+            imported_folder.erase(0, 8);
+            imported_folder.erase(imported_folder.length() -1, 1);
             // an folder was imported we must
             // recursive loop through all files
             // in it and open them and process the data.
