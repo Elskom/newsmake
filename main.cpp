@@ -1,8 +1,8 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
 #include <experimental/filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // formats the data stored in the changelog entry files
 // to always be no greater than 79 characters per line.
@@ -13,7 +13,8 @@ void formatline(std::string &line, bool tabs)
   {
     for (size_t i = 1; i < loops; i++)
     {
-      size_t line_off = (79 * i) + 1; // to get position to split into an new line.
+      size_t line_off =
+          (79 * i) + 1; // to get position to split into an new line.
       while (line.compare(line_off, 1, " ") != 0)
       {
         line_off -= 1; // rewind by 1 character until space.
@@ -40,12 +41,14 @@ int main(int argc, char *argv[])
   bool first_import = true;
   bool found_master_file = false;
   std::vector<std::string> section_data;
-  for (auto& p: std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path()))
+  for (auto &p : std::experimental::filesystem::recursive_directory_iterator(
+           std::experimental::filesystem::current_path()))
   {
-    if(p.path().extension().string() == ext)
+    if (p.path().extension().string() == ext)
     {
       found_master_file = true;
-      std::cout << "Processing " << p.path().filename().string() << "..." << std::endl;
+      std::cout << "Processing " << p.path().filename().string() << "..."
+                << std::endl;
       std::ifstream master_file(p);
       for (std::string line; std::getline(master_file, line);)
       {
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
           {
             project_name = line;
             project_name.erase(0, 12);
-            project_name.erase(project_name.length() -1, 1);
+            project_name.erase(project_name.length() - 1, 1);
           }
           else
           {
@@ -66,11 +69,12 @@ int main(int argc, char *argv[])
           {
             outputfile_name = line;
             outputfile_name.erase(0, 15);
-            outputfile_name.erase(outputfile_name.length() -1, 1);
+            outputfile_name.erase(outputfile_name.length() - 1, 1);
           }
           else
           {
-            std::cout << "Error: generated output file name not set." << std::endl;
+            std::cout << "Error: generated output file name not set."
+                      << std::endl;
             return 1;
           }
           if (line.find("tabs = ") == 0)
@@ -85,25 +89,33 @@ int main(int argc, char *argv[])
           {
             std::string imported_folder = line;
             imported_folder.erase(0, 8);
-            imported_folder.erase(imported_folder.length() -1, 1);
+            imported_folder.erase(imported_folder.length() - 1, 1);
             std::string section_string;
             if (first_import)
             {
               section_string = "                          Whats new in v";
               section_string += imported_folder;
-              section_string += "\n==============================================================================";
+              section_string += "\n============================================"
+                                "==================================";
               first_import = false;
             }
             else
             {
-              section_string = "\n==============================================================================";
+              section_string = "\n============================================="
+                               "=================================";
               section_string += "                             ";
               section_string += project_name;
               section_string += " v";
               section_string += imported_folder;
-              section_string += "\n==============================================================================";
+              section_string += "\n============================================"
+                                "==================================";
             }
-            for (auto& imported_path : std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::path(std::experimental::filesystem::current_path().string() + "\\" + imported_folder)))
+            for (auto &imported_path :
+                 std::experimental::filesystem::recursive_directory_iterator(
+                     std::experimental::filesystem::path(
+                         std::experimental::filesystem::current_path()
+                             .string() +
+                         "\\" + imported_folder)))
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
@@ -131,7 +143,7 @@ int main(int argc, char *argv[])
       if (!outputfile_name.empty())
       {
         std::ofstream output_file(outputfile_name);
-        for (const auto& section : section_data)
+        for (const auto &section : section_data)
         {
           output_file << section;
         }
