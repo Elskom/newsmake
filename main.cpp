@@ -4,20 +4,48 @@
 #include <fstream>
 #include <experimental/filesystem>
 
+// formats the data stored in the changelog entry files
+// to always be no greater than 79 characters per line.
+void formatline(std::string &line, bool tabs)
+{
+  size_t loops = line.size() / 79;
+  if (loops > 0)
+  {
+    for (size_t i = 1; i < loops; i++)
+    {
+      size_t line_off = (79 * i) + 1; // to get position to split into an new line.
+      while (line.compare(line_off, 1, " ") != 0)
+      {
+        line_off -= 1; // rewind by 1 character until space.
+      }
+      if (tabs)
+      {
+        line.insert(line_off, "\n\t\t");
+      }
+      else
+      {
+        line.insert(line_off, "\n        ");
+      }
+    }
+  }
+}
 
 int main(int argc, char *argv[])
 {
-  std::string ext(".master");
+  std::string ext = ".master";
   std::string project_name;
   std::string outputfile_name;
-  bool tabs;
-  bool delete_files;
+  bool tabs = true;
+  bool delete_files = true;
+  bool first_import = true;
+  bool found_master_file = false;
   std::vector<std::string> section_data;
-  for(auto& p: std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path())
+  for (auto& p: std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path()))
   {
-    if(p.path().extension() == ext())
+    if(p.path().extension().string() == ext)
     {
-      std::cout << "Processing " << p.filename() << "..." << std::endl;
+      found_master_file = true;
+      std::cout << "Processing " << p.path().filename().string() << "..." << std::endl;
       std::ifstream master_file(p);
       for (std::string line; std::getline(master_file, line);)
       {
@@ -49,39 +77,73 @@ int main(int argc, char *argv[])
           {
             tabs = line.c_str() == "tabs = true";
           }
-          else
-          {
-            tabs = true;
-          }
           if (line.find("deletechunkentryfiles = ") == 0)
           {
             delete_files = line.c_str() == "deletechunkentryfiles = true";
           }
-          else
-          {
-            delete_files = true;
-          }
           if (line.find("import \"") == 0)
           {
             std::string imported_folder = line;
-            // get the import folder name stripping the extra stuff.
             imported_folder.erase(0, 8);
             imported_folder.erase(imported_folder.length() -1, 1);
-            // an folder was imported we must
-            // recursive loop through all files
-            // in it and open them and process the data.
+            std::string section_string;
+            if (first_import)
+            {
+              section_string = "                          Whats new in v";
+              section_string += imported_folder;
+              section_string += "\n==============================================================================";
+              first_import = false;
+            }
+            else
+            {
+              section_string = "\n==============================================================================";
+              section_string += "                             ";
+              section_string += project_name;
+              section_string += " v";
+              section_string += imported_folder;
+              section_string += "\n==============================================================================";
+            }
+            for (auto& imported_path : std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::path(std::experimental::filesystem::current_path().string() + "\\" + imported_folder)))
+            {
+              std::ifstream entry_item(imported_path);
+              std::string temp;
+              while (entry_item >> temp)
+              {
+                // do nothing here still reading...
+              }
+              formatline(temp, tabs);
+              // entry item prefix. Important to not leave out.
+              if (tabs)
+              {
+                section_string += "\t+ ";
+              }
+              else
+              {
+                section_string += "    + ";
+              }
+              section_string += temp;
+              entry_item.close();
+            }
+            section_data.push_back(section_string);
           }
-          // open the imported files in the folder name of the import.
-          
-          // get imported files data.
-          
-          // close imported files.
-          
-          // write data to the output file set in the *.master file.
         }
+      }
+      if (!outputfile_name.empty())
+      {
+        std::ofstream output_file(outputfile_name);
+        for (const auto& section : section_data)
+        {
+          output_file << section;
+        }
+        output_file.close();
       }
       master_file.close();
     }
+  }
+  if (!found_master_file)
+  {
+    std::cout << "Error: no *.master file found." << std::endl;
+    return 1;
   }
   return 0;
 }
