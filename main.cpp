@@ -4,20 +4,20 @@
 #include <string>
 #include <vector>
 
-// formats the data stored in the changelog entry files
-// to always be no greater than 79 characters per line.
 void formatline(std::string &line, bool tabs)
 {
+  // this code seems to not keep the strings at
+  // 79 characters per line for the output file
+  // for some reason.
   size_t loops = line.size() / 79;
   if (loops > 0)
   {
     for (size_t i = 1; i < loops; i++)
     {
-      size_t line_off =
-          (79 * i) + 1; // to get position to split into an new line.
+      size_t line_off = (79 * i) + 1;
       while (line.compare(line_off, 1, " ") != 0)
       {
-        line_off -= 1; // rewind by 1 character until space.
+        line_off -= 1;
       }
       if (tabs)
       {
@@ -28,6 +28,19 @@ void formatline(std::string &line, bool tabs)
         line.insert(line_off, "\n        ");
       }
     }
+  }
+}
+
+bool comparestring(std::string &str, const char *_Ptr)
+{
+  int comp_res = str.compare(_Ptr);
+  if (comp_res == 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
   }
 }
 
@@ -60,32 +73,32 @@ int main(int argc, char *argv[])
             project_name.erase(0, 12);
             project_name.erase(project_name.length() - 1, 1);
           }
-          else
+          else if (line.find("projname = \"") != 0 && project_name.empty())
           {
             std::cout << "Error: Project name not set." << std::endl;
             return 1;
           }
-          if (line.find("genfilename = \"") == 0)
+          else if (line.find("genfilename = \"") == 0)
           {
             outputfile_name = line;
             outputfile_name.erase(0, 15);
             outputfile_name.erase(outputfile_name.length() - 1, 1);
           }
-          else
+          else if (line.find("genfilename = \"") != 0 && outputfile_name.empty())
           {
             std::cout << "Error: generated output file name not set."
                       << std::endl;
             return 1;
           }
-          if (line.find("tabs = ") == 0)
+          else if (line.find("tabs = ") == 0)
           {
-            tabs = line.c_str() == "tabs = true";
+            tabs = comparestring(line, "tabs = true");
           }
-          if (line.find("deletechunkentryfiles = ") == 0)
+          else if (line.find("deletechunkentryfiles = ") == 0)
           {
-            delete_files = line.c_str() == "deletechunkentryfiles = true";
+            delete_files = comparestring(line, "deletechunkentryfiles = true");
           }
-          if (line.find("import \"") == 0)
+          else if (line.find("import \"") == 0)
           {
             std::string imported_folder = line;
             imported_folder.erase(0, 8);
@@ -96,19 +109,19 @@ int main(int argc, char *argv[])
               section_string = "                          Whats new in v";
               section_string += imported_folder;
               section_string += "\n============================================"
-                                "==================================";
+                                "==================================\n";
               first_import = false;
             }
             else
             {
               section_string = "\n============================================="
-                               "=================================";
+                               "=================================\n";
               section_string += "                             ";
               section_string += project_name;
               section_string += " v";
               section_string += imported_folder;
               section_string += "\n============================================"
-                                "==================================";
+                                "==================================\n";
             }
             for (auto &imported_path :
                  std::experimental::filesystem::recursive_directory_iterator(
@@ -119,21 +132,21 @@ int main(int argc, char *argv[])
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
-              while (entry_item >> temp)
-              {
-                // do nothing here still reading...
-              }
-              formatline(temp, tabs);
-              // entry item prefix. Important to not leave out.
               if (tabs)
               {
-                section_string += "\t+ ";
+                temp = "\t+ ";
               }
               else
               {
-                section_string += "    + ";
+                temp = "    + ";
               }
+              for (std::string entry_line; std::getline(entry_item, entry_line);)
+              {
+                temp += entry_line;
+              }
+              formatline(temp, tabs);
               section_string += temp;
+              section_string += "\n";
               entry_item.close();
             }
             section_data.push_back(section_string);
@@ -148,6 +161,7 @@ int main(int argc, char *argv[])
           output_file << section;
         }
         output_file.close();
+        std::cout << "Successfully Generated '" << outputfile_name << "'." << std::endl;
       }
       master_file.close();
     }
