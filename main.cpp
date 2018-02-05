@@ -6,15 +6,12 @@
 
 void formatline(std::string &line, bool tabs)
 {
-  // this code seems to not keep the strings at
-  // 79 characters per line for the output file
-  // for some reason.
-  size_t loops = line.size() / 79;
-  if (loops > 0)
+  for (size_t chars = 0; chars < line.size(); chars++)
   {
-    for (size_t i = 1; i < loops; i++)
+    chars++;
+    if (chars % 79 == 0)
     {
-      size_t line_off = (79 * i) + 1;
+      size_t line_off = chars;
       while (line.compare(line_off, 1, " ") != 0)
       {
         line_off -= 1;
