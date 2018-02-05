@@ -30,15 +30,7 @@ void formatline(std::string &line, bool tabs)
 
 bool comparestring(std::string &str, const char *_Ptr)
 {
-  int comp_res = str.compare(_Ptr);
-  if (comp_res == 0)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return str.compare(_Ptr) == 0;
 }
 
 int main(int argc, char *argv[])
