@@ -28,11 +28,6 @@ void formatline(std::string &line, bool tabs)
   }
 }
 
-bool comparestring(std::string &str, const char *_Ptr)
-{
-  return str.compare(_Ptr) == 0;
-}
-
 int main(int argc, char *argv[])
 {
   std::string ext = ".master";
@@ -81,11 +76,11 @@ int main(int argc, char *argv[])
           }
           else if (line.find("tabs = ") == 0)
           {
-            tabs = comparestring(line, "tabs = true");
+            tabs = line.compare("tabs = true") == 0;
           }
           else if (line.find("deletechunkentryfiles = ") == 0)
           {
-            delete_files = comparestring(line, "deletechunkentryfiles = true");
+            delete_files = line.compare("deletechunkentryfiles = true") == 0;
           }
           else if (line.find("import \"") == 0)
           {
