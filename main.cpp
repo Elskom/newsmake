@@ -6,11 +6,15 @@
 
 void formatline(std::string &line, bool tabs)
 {
+  int constant_width = 79;
   for (size_t chars = 0; chars < line.size(); chars++)
   {
     chars++;
-    if (chars % 79 == 0)
+    if (chars % constant_width == 0)
     {
+      // we need this to hopefully format properly
+      // with the inserted input also entered in.
+      constant_width -= 8;
       size_t line_off = chars;
       while (line.compare(line_off, 1, " ") != 0)
       {
