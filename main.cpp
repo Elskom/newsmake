@@ -1,31 +1,39 @@
 #include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 void formatline(std::string &line, bool tabs)
 {
-  for (size_t chars = 79; chars < line.size(); chars+=79)
+  std::stringstream linestream;
+  int line_width = 79;
+  for (size_t i = 0; i < line.size(); i++)
   {
-    // we need this to hopefully format properly
-    // with the inserted input also entered in.
-    size_t line_off = chars;
-    while (line.compare(line_off, 1, " ") != 0)
+    // TODO: Make this never split words.
+    if (i % line_width == 0)
     {
-      line_off -= 1;
+      if (line_width == 79)
+      {
+        // Decrement this to always
+        // ensure this always splits
+        // the line at the 80th
+        // character no matter what.
+        line_width -= 8;
+      }
+      if (tabs)
+      {
+        linestream << "\n\t\t";
+      }
+      else
+      {
+        linestream << "\n        ";
+      }
     }
-    // remove extra space.
-    line.erase(line_off, 1);
-    if (tabs)
-    {
-      line.insert(line_off, "\n\t\t");
-    }
-    else
-    {
-      line.insert(line_off, "\n        ");
-    }
+    linestream << line[i];
   }
+  line = linestream.str();
 }
 
 int main(int argc, char *argv[])
