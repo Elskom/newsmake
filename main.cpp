@@ -11,7 +11,11 @@ void formatline(std::string &line, bool tabs)
   int line_width = 79;
   for (size_t i = 0; i < line.size(); i++)
   {
-    // TODO: Make this never split words.
+    // TODO: Make this never split words
+    // that dtarts before line_width and
+    // ends after line_width by moving
+    // that word to an new line to
+    // preserve readability.
     if (i % line_width == 0)
     {
       if (line_width == 79)
