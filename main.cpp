@@ -1,31 +1,67 @@
 #include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
-void formatline(std::string &line, bool tabs)
+void formatline(std::string &input, bool tabs)
 {
-  for (size_t chars = 79; chars < line.size(); chars+=79)
+  // TODO: count the spaces and tabs upon new line.
+  size_t pos = 0;
+  size_t last_pos = 0;
+  std::stringstream output;
+
+  //first pass ie. first line
+  last_pos = pos;
+  pos = input.substr(last_pos, 80).find_last_of(' '); //todo: verify this check includes the last character.. it should, but in case it doesn't
+  /*
+  size_t tab_pos;
+  do
   {
-    // we need this to hopefully format properly
-    // with the inserted input also entered in.
-    size_t line_off = chars;
-    while (line.compare(line_off, 1, " ") != 0)
+    //count tabs
+    //count * (4-1)
+    //outer loops counts each tab already once
+  }
+  while (tab_pos != std::string::npos);
+  */
+  output << input.substr(last_pos, pos - last_pos);
+  if (tabs)
+  {
+    output << "\n\t\t";
+  }
+  else
+  {
+    output << "\n        ";
+  }
+
+  //second pass, and subsequent passes. ie. not first line    
+  do
+  {
+    last_pos = pos;
+    pos = input.substr(last_pos, 72).find_last_of(' '); //todo: verify this check includes the last character.. it should, but in case it doesn't
+    /*
+    size_t tab_pos;
+    do
     {
-      line_off -= 1;
+      //count tabs
+      //count * (4-1)
+      //outer loops counts each tab already once
     }
-    // remove extra space.
-    line.erase(line_off, 1);
+    while (tab_pos != std::string::npos);
+    */
+    output << input.substr(last_pos, pos - last_pos);
     if (tabs)
     {
-      line.insert(line_off, "\n\t\t");
+      output << "\n\t\t";
     }
     else
     {
-      line.insert(line_off, "\n        ");
+      output << "\n        ";
     }
   }
+  while (pos != std::string::npos);
+  input = output.str();
 }
 
 int main(int argc, char *argv[])
