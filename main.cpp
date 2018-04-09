@@ -1,4 +1,15 @@
+#include "fs.hpp"
+#if _has_include(<filesystem>)
+#include <filesystem>
+#ifdef HAVE_STD_FS
+namespace fs = std::filesystem;
+#elif HAVE_STD_EXP_FS
+namespace fs = std::experimental::filesystem;
+#endif
+#else
 #include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -38,8 +49,8 @@ int main(int argc, char *argv[])
   bool first_import = true;
   bool found_master_file = false;
   std::vector<std::string> section_data;
-  for (auto &p : std::experimental::filesystem::recursive_directory_iterator(
-           std::experimental::filesystem::current_path()))
+  for (auto &p : fs::recursive_directory_iterator(
+           fs::current_path()))
   {
     if (p.path().extension().string() == ext)
     {
@@ -108,9 +119,9 @@ int main(int argc, char *argv[])
                                 "==================================\n";
             }
             for (auto &imported_path :
-                 std::experimental::filesystem::recursive_directory_iterator(
-                     std::experimental::filesystem::path(
-                         std::experimental::filesystem::current_path()
+                 fs::recursive_directory_iterator(
+                     fs::path(
+                         fs::current_path()
                              .string() +
                          "\\" + imported_folder)))
             {
