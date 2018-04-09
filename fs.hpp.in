@@ -1,0 +1,12 @@
+/*
+ * defined if the c++ headers has
+ * std::filesystem in their
+ * filesystem header(s).
+ */
+#cmakedefine HAVE_STD_FS
+/*
+ * defined if the c++ headers has
+ * std::experimental::filesystem
+ * in their filesystem header(s).
+ */
+#cmakedefine HAVE_STD_EXP_FS
