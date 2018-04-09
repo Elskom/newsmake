@@ -24,7 +24,7 @@ set(NEWSMAKE_FILESYSTEM
          int main()
          {
            // print current directory.
-           std::cout << fs:: current_path(); << std::endl;
+           std::cout << fs::current_path(); << std::endl;
            return 0;
          }"
 )
@@ -35,7 +35,7 @@ set(NEWSMAKE_EXP_FILESYSTEM
          int main()
          {
            // print current directory.
-           std::cout << fs:: current_path(); << std::endl;
+           std::cout << fs::current_path(); << std::endl;
            return 0;
          }"
 )
