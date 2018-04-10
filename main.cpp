@@ -22,24 +22,13 @@ namespace fs = std::experimental::filesystem;
 
 void formatline(std::string &input, bool tabs)
 {
-  // TODO: count the spaces and tabs upon new line.
   size_t pos = 0;
   size_t last_pos = 0;
   std::stringstream output;
 
   //first pass ie. first line
   last_pos = pos;
-  pos = input.substr(last_pos, 80).find_last_of(' '); //todo: verify this check includes the last character.. it should, but in case it doesn't
-  /*
-  size_t tab_pos;
-  do
-  {
-    //count tabs
-    //count * (4-1)
-    //outer loops counts each tab already once
-  }
-  while (tab_pos != std::string::npos);
-  */
+  pos = input.substr(last_pos, 80).find_last_of(' ');
   output << input.substr(last_pos, pos - last_pos);
   if (tabs)
   {
@@ -54,17 +43,7 @@ void formatline(std::string &input, bool tabs)
   do
   {
     last_pos = pos;
-    pos = input.substr(last_pos, 72).find_last_of(' '); //todo: verify this check includes the last character.. it should, but in case it doesn't
-    /*
-    size_t tab_pos;
-    do
-    {
-      //count tabs
-      //count * (4-1)
-      //outer loops counts each tab already once
-    }
-    while (tab_pos != std::string::npos);
-    */
+    pos = input.substr(last_pos, 72).find_last_of(' ');
     output << input.substr(last_pos, pos - last_pos);
     if (tabs)
     {
