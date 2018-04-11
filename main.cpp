@@ -122,12 +122,13 @@ int main(int argc, char *argv[])
               section_string += "\n============================================"
                                 "==================================\n";
             }
+            std::string section_text;
             for (auto &imported_path :
                  fs::recursive_directory_iterator(
                      fs::path(
                          fs::current_path()
                              .string() +
-                         "\\" + imported_folder)))
+                         "/" + imported_folder)))
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
@@ -144,10 +145,19 @@ int main(int argc, char *argv[])
                 temp += entry_line;
               }
               formatline(temp, tabs);
-              section_string += temp;
-              section_string += "\n";
+              temp += '\n';
+              section_text += temp;
               entry_item.close();
             }
+            if ( && !section_text.empty())
+            {
+              // save section text and then delete the folder.
+            }
+            if (section_text.empty())
+            {
+              // load saved *.section file.
+            }
+            section_string += section_text;
             section_data.push_back(section_string);
           }
         }
