@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
                      fs::path(
                          fs::current_path()
                              .string() +
-                         "/" + imported_folder)))
+                         '/' + imported_folder)))
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
               section_text += temp;
               entry_item.close();
             }
-            if ( && !section_text.empty())
+            if (delete_file && !section_text.empty())
             {
               // save section text and then delete the folder.
             }
