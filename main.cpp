@@ -1,3 +1,11 @@
+/*
+ * newsmake - News / changelog making tool.
+ * licenced under GPL. See LICENSE for details.
+ */
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "fs.hpp"
 #if _has_include(<filesystem>)
 #include <filesystem>
@@ -10,10 +18,6 @@ namespace fs = std::experimental::filesystem;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #endif
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <vector>
 
 void formatline(std::string &line, bool tabs)
 {
