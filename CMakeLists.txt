@@ -18,7 +18,7 @@ set(SOURCE_FILES
 
 # compile checks.
 set(NEWSMAKE_FILESYSTEM
-        "#incluse <iostream>
+        "#include <iostream>
          #include <filesystem>
          namespace fs = std::filesystem;
          int main()
@@ -29,7 +29,7 @@ set(NEWSMAKE_FILESYSTEM
          }"
 )
 set(NEWSMAKE_EXP_FILESYSTEM
-        "#incluse <iostream>
+        "#include <iostream>
          #include <experimental/filesystem>
          namespace fs = std::experimental::filesystem;
          int main()
