@@ -11,40 +11,35 @@
 # stuff too manually?
 cmake_minimum_required(VERSION 3.6)
 project(newsmake)
+INCLUDE(CheckCXXSourceCompiles)
 
 set(SOURCE_FILES
         main.cpp
 )
 
 # compile checks.
-set(NEWSMAKE_FILESYSTEM
+check_cxx_source_compiles(
         "#include <iostream>
          #include <filesystem>
          namespace fs = std::filesystem;
          int main()
          {
            // print current directory.
-           std::cout << fs::current_path(); << std::endl;
+           std::cout << fs::current_path() << std::endl;
            return 0;
          }"
+        HAVE_STD_FS
 )
-set(NEWSMAKE_EXP_FILESYSTEM
+check_cxx_source_compiles(
         "#include <iostream>
          #include <experimental/filesystem>
          namespace fs = std::experimental::filesystem;
          int main()
          {
            // print current directory.
-           std::cout << fs::current_path(); << std::endl;
+           std::cout << fs::current_path() << std::endl;
            return 0;
          }"
-)
-check_cxx_source_compiles(
-        ${NEWSMAKE_FILESYSTEM}
-        HAVE_STD_FS
-)
-check_cxx_source_compiles(
-        ${NEWSMAKE_EXP_FILESYSTEM}
         HAVE_STD_EXP_FS
 )
 
@@ -52,9 +47,8 @@ check_cxx_source_compiles(
 configure_file(${CMAKE_SOURCE_DIR}/fs.hpp.in
 ${CMAKE_SOURCE_DIR}/fs.hpp)
 
+add_executable(newsmake ${SOURCE_FILES})
 target_compile_features(newsmake
-        PUBLIC
+        PRIVATE
         cxx_std_17
 )
-
-add_executable(newsmake ${SOURCE_FILES})

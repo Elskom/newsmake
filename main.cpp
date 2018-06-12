@@ -7,12 +7,13 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <exception>
 #include "fs.hpp"
-#if _has_include(<filesystem>)
+#if __has_include(<filesystem>)
 #include <filesystem>
 #ifdef HAVE_STD_FS
 namespace fs = std::filesystem;
-#elif HAVE_STD_EXP_FS
+#elif defined(HAVE_STD_EXP_FS)
 namespace fs = std::experimental::filesystem;
 #endif
 #else
@@ -20,41 +21,49 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::experimental::filesystem;
 #endif
 
-void formatline(std::string &input, bool tabs)
+void formatline(std::string &input, bool tabs, const size_t line_length = 80)
 {
+  if (input.length() < line_length)
+  {
+    return;
+  }
+  const char* indent = (tabs ? "\t\t" : "        ");
+  const int tab_length = 8;
+  int indent_line_length = line_length;
   size_t pos = 0;
   size_t last_pos = 0;
   std::stringstream output;
-
-  //first pass ie. first line
-  last_pos = pos;
-  pos = input.substr(last_pos, 80).find_last_of(' ');
-  output << input.substr(last_pos, pos - last_pos);
-  if (tabs)
+  while (true)
   {
-    output << "\n\t\t";
-  }
-  else
-  {
-    output << "\n        ";
-  }
-
-  //second pass, and subsequent passes. ie. not first line    
-  do
-  {
+    if (pos > 0 && last_pos == pos)
+    {
+      throw new std::exception("bug");
+    }
     last_pos = pos;
-    pos = input.substr(last_pos, 72).find_last_of(' ');
-    output << input.substr(last_pos, pos - last_pos);
-    if (tabs)
+    if (input[pos] == ' ' && pos>0) ++pos;
+    if (pos >= input.length())
     {
-      output << "\n\t\t";
+      break;
     }
-    else
+    std::string sub_s = input.substr(pos, indent_line_length);
+    size_t last_space = sub_s.find_last_of(' ');
+    if (last_space == 0 || last_space == std::string::npos || pos + indent_line_length >= input.length())
     {
-      output << "\n        ";
+      last_space = sub_s.length();
     }
+    if (last_space != sub_s.length())
+    {
+      sub_s = sub_s.substr(0, last_space);
+    }
+    output << sub_s;
+    pos += last_space;
+    if (pos >= input.length())
+    {
+      break;
+    }
+    output << '\n' << indent;
+    indent_line_length = line_length - tab_length;
   }
-  while (pos != std::string::npos);
   input = output.str();
 }
 
@@ -164,7 +173,7 @@ int main(int argc, char *argv[])
               section_text += temp;
               entry_item.close();
             }
-            if (delete_file && !section_text.empty())
+            if (delete_files && !section_text.empty())
             {
               // save section text and then delete the folder.
             }
