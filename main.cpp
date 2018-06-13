@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
   std::string project_name;
   std::string outputfile_name;
   bool tabs = true;
+  bool devmode = false;
   bool delete_files = true;
   bool first_import = true;
   bool found_master_file = false;
@@ -101,6 +102,10 @@ int main(int argc, char *argv[])
             std::cout << "Error: Project name not set." << std::endl;
             return 1;
           }
+          else if (line.find("devmode = ") == 0)
+          {
+            devmode = line.compare("devmode = false") != 0;
+          }
           else if (line.find("genfilename = \"") == 0)
           {
             outputfile_name = line;
@@ -119,7 +124,14 @@ int main(int argc, char *argv[])
           }
           else if (line.find("deletechunkentryfiles = ") == 0)
           {
-            delete_files = line.compare("deletechunkentryfiles = true") == 0;
+            if (devmode)
+            {
+              delete_files = line.compare("deletechunkentryfiles = true") == 0;
+            }
+            else
+            {
+              delete_files = false;
+            }
           }
           else if (line.find("import \"") == 0)
           {
@@ -176,10 +188,39 @@ int main(int argc, char *argv[])
             if (delete_files && !section_text.empty())
             {
               // save section text and then delete the folder.
+              std::ofstream section_file(
+                  fs::current_path().string() + '/' + imported_folder + ".section");
+              section_file << section_text;
+              section_file.close();
+              for (auto &imported_path :
+                   fs::recursive_directory_iterator(
+                       fs::path(
+                           fs::current_path()
+                               .string() +
+                           '/' + imported_folder)))
+              {
+                fs::remove(imported_path);
+              }
+              fs::remove(
+                fs::path(fs::current_path().string() +
+                  '/' + imported_folder));
             }
             if (section_text.empty())
             {
               // load saved *.section file.
+              if (fs::exists(
+                fs::path(
+                  fs::current_path().string() + '/'
+                  + imported_folder + ".section")))
+              {
+                std::ifstream section_file(
+                  fs::current_path().string() + '/' + imported_folder + ".section");
+                for (std::string entry_line; std::getline(section_file, entry_line);)
+                {
+                  section_text += entry_line + '\n';
+                }
+                section_file.close();
+              }
             }
             section_string += section_text;
             section_data.push_back(section_string);
