@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
           }
           else if (line.find("devmode = ") == 0)
           {
-            devmode = line.compare("devmode = false") != 0;
+            devmode = line.compare("devmode = true") == 0;
           }
           else if (line.find("genfilename = \"") == 0)
           {
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
           }
           else if (line.find("deletechunkentryfiles = ") == 0)
           {
-            if (devmode)
+            if (!devmode)
             {
               delete_files = line.compare("deletechunkentryfiles = true") == 0;
             }
