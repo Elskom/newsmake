@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
       }
       if (!outputfile_name.empty())
       {
-        if (fs::exists(fs::path(outputfile_name)))
+        if (!fs::exists(fs::path(outputfile_name)))
         {
           fs::create_directories(fs::path(outputfile_name).parent_path());
         }
