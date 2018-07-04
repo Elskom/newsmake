@@ -138,6 +138,11 @@ int main(int argc, char *argv[])
               delete_files = false;
             }
           }
+          // user can now output as markdown.
+          else if (line.find("outputasmd = ") == 0)
+          {
+            output_format_md = line.compare("outputasmd = true") == 0;
+          }
           else if (line.find("import \"") == 0)
           {
             std::string imported_folder = line;
@@ -161,10 +166,12 @@ int main(int argc, char *argv[])
             }
             else
             {
-              section_string = "\n============================================="
-                               "=================================\n";
               if (!output_format_md)
               {
+                // if the section divider is not here the resulting markdown
+                // would look like trash.
+                section_string = "\n============================================="
+                                 "=================================\n";
                 section_string += "                             ";
               }
               section_string += project_name;
