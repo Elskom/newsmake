@@ -21,13 +21,17 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::experimental::filesystem;
 #endif
 
-void formatline(std::string &input, bool tabs, const size_t line_length = 80)
+void formatline(
+  std::string &input,
+  bool tabs,
+  bool output_format_md,
+  const size_t line_length = 80)
 {
   if (input.length() < line_length)
   {
     return;
   }
-  const char* indent = (tabs ? "\t\t" : "        ");
+  const char* indent = (!output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    "));
   const int tab_length = 8;
   int indent_line_length = line_length;
   size_t pos = 0;
@@ -77,6 +81,7 @@ int main(int argc, char *argv[])
   bool delete_files = true;
   bool first_import = true;
   bool found_master_file = false;
+  bool output_format_md = false;
   std::vector<std::string> section_data;
   for (auto &p : fs::recursive_directory_iterator(
            fs::current_path()))
@@ -141,7 +146,14 @@ int main(int argc, char *argv[])
             std::string section_string;
             if (first_import)
             {
-              section_string = "                          Whats new in v";
+              if (output_format_md)
+              {
+                section_string = "Whats new in v";
+              }
+              else
+              {
+                section_string = "                          Whats new in v";
+              }
               section_string += imported_folder;
               section_string += "\n============================================"
                                 "==================================\n";
@@ -151,7 +163,10 @@ int main(int argc, char *argv[])
             {
               section_string = "\n============================================="
                                "=================================\n";
-              section_string += "                             ";
+              if (!output_format_md)
+              {
+                section_string += "                             ";
+              }
               section_string += project_name;
               section_string += " v";
               section_string += imported_folder;
@@ -168,19 +183,26 @@ int main(int argc, char *argv[])
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
-              if (tabs)
+              if (!output_format_md)
               {
-                temp = "\t+ ";
+                if (tabs)
+                {
+                  temp = "\t+ ";
+                }
+                else
+                {
+                  temp = "    + ";
+                }
               }
               else
               {
-                temp = "    + ";
+                temp = "+ ";
               }
               for (std::string entry_line; std::getline(entry_item, entry_line);)
               {
                 temp += entry_line;
               }
-              formatline(temp, tabs);
+              formatline(temp, tabs, output_format_md);
               temp += '\n';
               section_text += temp;
               entry_item.close();
