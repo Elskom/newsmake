@@ -8,26 +8,39 @@
 #include <string>
 #include <vector>
 #include <exception>
-#include "fs.hpp"
 #if __has_include(<filesystem>)
 #include <filesystem>
-#ifdef HAVE_STD_FS
-namespace fs = std::filesystem;
-#elif defined(HAVE_STD_EXP_FS)
-namespace fs = std::experimental::filesystem;
-#endif
 #else
 #include <experimental/filesystem>
+#endif
+#ifdef __cpp_lib_filesystem
+namespace fs = std::filesystem;
+#elif defined(__cpp_lib_experimental_filesystem)
+namespace fs = std::experimental::filesystem;
+#elif !defined(__cpp_lib_filesystem) && !defined(__cpp_lib_experimental_filesystem) && (__has_include(<filesystem>) || __has_include(<experimental/filesystem>)) && defined(_WIN32)
+// Visual Studio 2017 (15.7.x) seems to
+// not have a c++ std::experimental::filesystem macro
+// when std::filesystem is not present,
+// and an std::filesystem macro when
+// std::experimental::filesystem is
+// not present. Because of this I guess
+// fallback to std::experimental::filesystem
+// and hope it works (/tableflip).
+// However it seems the current preview (15.8.x) does.
 namespace fs = std::experimental::filesystem;
 #endif
 
-void formatline(std::string &input, bool tabs, const size_t line_length = 80)
+void formatline(
+  std::string &input,
+  bool tabs,
+  bool output_format_md,
+  const size_t line_length = 80)
 {
   if (input.length() < line_length)
   {
     return;
   }
-  const char* indent = (tabs ? "\t\t" : "        ");
+  const char* indent = (!output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    "));
   const int tab_length = 8;
   int indent_line_length = line_length;
   size_t pos = 0;
@@ -77,6 +90,7 @@ int main(int argc, char *argv[])
   bool delete_files = true;
   bool first_import = true;
   bool found_master_file = false;
+  bool output_format_md = false;
   std::vector<std::string> section_data;
   for (auto &p : fs::recursive_directory_iterator(
            fs::current_path()))
@@ -133,6 +147,11 @@ int main(int argc, char *argv[])
               delete_files = false;
             }
           }
+          // user can now output as markdown.
+          else if (line.find("outputasmd = ") == 0)
+          {
+            output_format_md = line.compare("outputasmd = true") == 0;
+          }
           else if (line.find("import \"") == 0)
           {
             std::string imported_folder = line;
@@ -141,7 +160,14 @@ int main(int argc, char *argv[])
             std::string section_string;
             if (first_import)
             {
-              section_string = "                          Whats new in v";
+              if (output_format_md)
+              {
+                section_string = "Whats new in v";
+              }
+              else
+              {
+                section_string = "                          Whats new in v";
+              }
               section_string += imported_folder;
               section_string += "\n============================================"
                                 "==================================\n";
@@ -149,9 +175,14 @@ int main(int argc, char *argv[])
             }
             else
             {
-              section_string = "\n============================================="
-                               "=================================\n";
-              section_string += "                             ";
+              if (!output_format_md)
+              {
+                // if the section divider is not here the resulting markdown
+                // would look like trash.
+                section_string = "\n============================================="
+                                 "=================================\n";
+                section_string += "                             ";
+              }
               section_string += project_name;
               section_string += " v";
               section_string += imported_folder;
@@ -168,19 +199,26 @@ int main(int argc, char *argv[])
             {
               std::ifstream entry_item(imported_path);
               std::string temp;
-              if (tabs)
+              if (!output_format_md)
               {
-                temp = "\t+ ";
+                if (tabs)
+                {
+                  temp = "\t+ ";
+                }
+                else
+                {
+                  temp = "    + ";
+                }
               }
               else
               {
-                temp = "    + ";
+                temp = "+ ";
               }
               for (std::string entry_line; std::getline(entry_item, entry_line);)
               {
                 temp += entry_line;
               }
-              formatline(temp, tabs);
+              formatline(temp, tabs, output_format_md);
               temp += '\n';
               section_text += temp;
               entry_item.close();
