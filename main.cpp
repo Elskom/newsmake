@@ -17,6 +17,16 @@
 namespace fs = std::filesystem;
 #elif defined(__cpp_lib_experimental_filesystem)
 namespace fs = std::experimental::filesystem;
+#elif !defined(__cpp_lib_filesystem) && !defined(__cpp_lib_experimental_filesystem) && (__has_include(<filesystem>) || __has_include(<experimental/filesystem>)) && defined(_WIN32)
+// visual studio seems to not have a
+// c++ std::experimental::filesystem macro
+// when std::filesystem is not present,
+// and an std::filesystem macro when
+// std::experimental::filesystem is
+// not present. Because of this I guess
+// fallback to std::experimental::filesystem
+// and hope it works. (/tableflip)
+namespace fs = std::experimental::filesystem;
 #endif
 
 void formatline(
