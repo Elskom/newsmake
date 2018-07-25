@@ -8,16 +8,14 @@
 #include <string>
 #include <vector>
 #include <exception>
-#include "fs.hpp"
 #if __has_include(<filesystem>)
 #include <filesystem>
-#ifdef HAVE_STD_FS
-namespace fs = std::filesystem;
-#elif defined(HAVE_STD_EXP_FS)
-namespace fs = std::experimental::filesystem;
-#endif
 #else
 #include <experimental/filesystem>
+#endif
+#ifdef __cpp_lib_filesystem
+namespace fs = std::filesystem;
+#elif defined(__cpp_lib_experimental_filesystem)
 namespace fs = std::experimental::filesystem;
 #endif
 
