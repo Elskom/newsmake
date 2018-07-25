@@ -50,7 +50,7 @@ void formatline(
   {
     if (pos > 0 && last_pos == pos)
     {
-      throw new std::exception("bug");
+      throw new std::runtime_error("bug");
     }
     last_pos = pos;
     if (input[pos] == ' ' && pos>0) ++pos;
