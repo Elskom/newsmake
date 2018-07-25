@@ -10,43 +10,10 @@
 # stuff too manually?
 cmake_minimum_required(VERSION 3.6)
 project(newsmake)
-# INCLUDE(CheckCXXSourceCompiles)
 
 set(SOURCE_FILES
         main.cpp
 )
-
-# apperently the new feature test macros
-# should do the work of these tests.
-# compile checks.
-# check_cxx_source_compiles(
-#         "#include <iostream>
-#          #include <filesystem>
-#          namespace fs = std::filesystem;
-#          int main()
-#          {
-#            // print current directory.
-#            std::cout << fs::current_path() << std::endl;
-#            return 0;
-#          }"
-#         HAVE_STD_FS
-# )
-# check_cxx_source_compiles(
-#         "#include <iostream>
-#          #include <experimental/filesystem>
-#          namespace fs = std::experimental::filesystem;
-#          int main()
-#          {
-#            // print current directory.
-#            std::cout << fs::current_path() << std::endl;
-#            return 0;
-#          }"
-#         HAVE_STD_EXP_FS
-# )
-
-# configure fs.hpp for main.cpp to compile properly.
-# configure_file(${CMAKE_SOURCE_DIR}/fs.hpp.in
-# ${CMAKE_SOURCE_DIR}/fs.hpp)
 
 add_executable(newsmake ${SOURCE_FILES})
 target_compile_features(newsmake
