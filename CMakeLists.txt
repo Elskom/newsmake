@@ -15,7 +15,6 @@ target_compile_features(newsmake
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # since clang, link with -lc++experimental.
-  target_link_libraries(${PROJECT_NAME} c++)
   target_link_libraries(${PROJECT_NAME} c++experimental)
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   # since gcc, link with -lstdc++fs.
