@@ -8,7 +8,7 @@
 # or to the clang library for
 # the std::experimental
 # stuff too manually?
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.6)
 project(newsmake CXX)
 
 set(SOURCE_FILES
@@ -20,13 +20,3 @@ target_compile_features(newsmake
         PRIVATE
         cxx_std_17
 )
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  # since clang, link with -lc++experimental and -lc++.
-  target_link_libraries(${PROJECT_NAME} c++)
-  target_link_libraries(${PROJECT_NAME} c++experimental)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  # since gcc, link with -lstdc++fs and -lstdc++.
-  target_link_libraries(${PROJECT_NAME} stdc++)
-  target_link_libraries(${PROJECT_NAME} stdc++fs)
-endif()
