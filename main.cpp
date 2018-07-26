@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
       found_master_file = true;
       std::cout << "Processing " << p.path().filename().string() << "..."
                 << std::endl;
-      std::ifstream master_file(p);
+      std::ifstream master_file(p.path().string());
       for (std::string line; std::getline(master_file, line);)
       {
         if (line.find("# ") != 0)
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
                              .string() +
                          '/' + imported_folder)))
             {
-              std::ifstream entry_item(imported_path);
+              std::ifstream entry_item(imported_path.path().string());
               std::string temp;
               if (!output_format_md)
               {
