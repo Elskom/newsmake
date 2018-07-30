@@ -2,7 +2,27 @@
 News / changelog making tool.
 
 Current: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake)
+
 Master: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde/branch/master?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake/branch/master)
+
+To build and install on linux:
+
+    cd build
+    cmake ..
+    make
+    sudo make install
+    cd ..
+
+Will install newsmake to 'usr/local/bin'.
+
+To build on Windows:
+
+    cd build
+    cmake ..
+    msbuild newsmake.sln /p:Configuration="Release" /p:Platform="Win32" /m /verbosity:minimal
+    cd ..
+
+Currently no way to install yet on Windows.
 
 Any bugs can be filed in this repository's built in bug tracker.
 
