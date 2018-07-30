@@ -20,3 +20,5 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   # since gcc, link with -lstdc++fs.
   target_link_libraries(${PROJECT_NAME} stdc++fs)
 endif()
+# allow make install or sudo make install.
+install(TARGETS newsmake DESTINATION bin)
