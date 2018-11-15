@@ -22,3 +22,16 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 endif()
 # allow make install or sudo make install.
 install(TARGETS newsmake DESTINATION bin)
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE
+     "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_PACKAGE_VENDOR "Els_kom Org.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "News / changelog making tool.")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_VERSION_TWEAK "0")
+set(CPACK_NSIS_MODIFY_PATH ON)
+# TODO: Force add the page to ask the user to add newsmake to %path% on all installers in all systems.
+# set(CPACK_WIX_MODIFY_PATH ON)
+include(CPack)
