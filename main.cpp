@@ -2,6 +2,11 @@
  * newsmake - News / changelog making tool.
  * licenced under GPL. See LICENSE for details.
  */
+#if defined(_WIN32) || defined(_WIN64)
+// apperently Visual Studio complains
+// about std::getenv being unsafe...
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include <cstdlib>
 #include <exception>
 #include <fstream>
@@ -32,9 +37,6 @@ namespace fs = std::experimental::filesystem;
 // and hope it works (/tableflip).
 // However it seems the current preview (15.8.x) does.
 namespace fs = std::experimental::filesystem;
-// apperently Visual Studio complains
-// about std::getenv being unsafe...
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 void formatline(std::string &input, bool tabs, bool output_format_md,
@@ -110,17 +112,40 @@ int main(int argc, char *argv[]) {
               // find the "$(" and make a substring then find the first ")"
               size_t env_open = line.find_first_of("$(");
               size_t env_close = line.find_first_of(")");
-              std::string envvar = line.substr(env_open, env_close - env_open);
-              line.replace(env_open, env_close - env_open,
-                           std::getenv(envvar.c_str()));
-            } while (line.find("$(") == 0);
+              if (env_open != env_close)
+              {
+                env_open += 2;
+                std::string envvar = line.substr(env_open, env_close - env_open);
+                // a hack to resolve the current working directory manually...
+                if ((envvar.compare("CD") == 0) || (envvar.compare("cd") == 0))
+                {
+                  auto envvalue = fs::current_path().string();
+                  envvalue.append("/");
+                  do {
+                    envvalue = envvalue.replace(envvalue.find_first_of("\\"), 1, "/");
+                  } while (envvalue.find("\\") != envvalue.npos);
+                  env_open -= 2;
+                  line = line.replace(env_open, (env_close + 1) - env_open, envvalue);
+                }
+                else if (auto envvalue = std::getenv(envvar.c_str()))
+                {
+                  env_open -= 2;
+                  line = line.replace(env_open, (env_close + 1) - env_open, envvalue);
+                }
+                else
+                {
+                  std::cerr << "Fatal: Environment variable does not exist." << std::endl;
+                  return 1;
+                }
+              }
+            } while (line.find("$(") != line.npos);
             if (line.find("projname = \"") == 0) {
               project_name = line;
               project_name.erase(0, 12);
               project_name.erase(project_name.length() - 1, 1);
             }
             else if (line.find("projname = \"") != 0 && project_name.empty()) {
-              std::cout << "Error: Project name not set." << std::endl;
+              std::cerr << "Fatal: Project name not set." << std::endl;
               return 1;
             }
             else if (line.find("devmode = ") == 0) {
@@ -133,7 +158,7 @@ int main(int argc, char *argv[]) {
             }
             else if (line.find("genfilename = \"") != 0 &&
               outputfile_name.empty()) {
-              std::cout << "Error: generated output file name not set."
+              std::cerr << "Fatal: generated output file name not set."
                 << std::endl;
               return 1;
             }
@@ -261,7 +286,7 @@ int main(int argc, char *argv[]) {
       }
     }
     if (!found_master_file) {
-      std::cout << "Error: no *.master file found." << std::endl;
+      std::cerr << "Fatal: no *.master file found." << std::endl;
       return 1;
     }
   }
