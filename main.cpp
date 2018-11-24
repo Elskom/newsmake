@@ -32,6 +32,9 @@ namespace fs = std::experimental::filesystem;
 // and hope it works (/tableflip).
 // However it seems the current preview (15.8.x) does.
 namespace fs = std::experimental::filesystem;
+// apperently Visual Studio complains
+// about std::getenv being unsafe...
+#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 void formatline(std::string &input, bool tabs, bool output_format_md,
