@@ -2,6 +2,7 @@
  * newsmake - News / changelog making tool.
  * licenced under GPL. See LICENSE for details.
  */
+#include <cstdlib>
 #include <exception>
 #include <fstream>
 #include <iostream>
@@ -101,6 +102,15 @@ int main(int argc, char *argv[]) {
         std::ifstream master_file(p.path().string());
         for (std::string line; std::getline(master_file, line);) {
           if (line.find("# ") != 0) {
+            do {
+              // get environment variable name.
+              // find the "$(" and make a substring then find the first ")"
+              size_t env_open = line.find_first_of("$(");
+              size_t env_close = line.find_first_of(")");
+              std::string envvar = line.substr(env_open, env_close - env_open);
+              line.replace(env_open, env_close - env_open,
+                           std::getenv(envvar.c_str()));
+            } while (line.find("$(") == 0);
             if (line.find("projname = \"") == 0) {
               project_name = line;
               project_name.erase(0, 12);
