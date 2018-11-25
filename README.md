@@ -15,14 +15,15 @@ To build and install on linux:
 
 Will install newsmake to 'usr/local/bin'.
 
-To build on Windows:
+To build and install on Windows:
 
     cd build
     cmake ..
     msbuild newsmake.sln /p:Configuration="Release" /p:Platform="Win32" /m /verbosity:minimal
+    cpack -G "WIX;7Z;NSIS;TZ;TXZ;TGZ;TBZ2"
     cd ..
 
-Currently no way to install yet on Windows.
+Then run the generated install exe or msi file.
 
 Any bugs can be filed in this repository's built in bug tracker.
 
