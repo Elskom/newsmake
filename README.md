@@ -11,7 +11,7 @@ To build:
 
 To install:
 
-    nuget install newsmake
+    dotnet tool install -g newsmake
 
 Any bugs can be filed in this repository's built in bug tracker.
 
