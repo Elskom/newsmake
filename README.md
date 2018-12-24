@@ -5,25 +5,13 @@ Current: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8
 
 Master: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde/branch/master?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake/branch/master)
 
-To build and install on linux:
+To build:
 
-    cd build
-    cmake ..
-    make
-    sudo make install
-    cd ..
+    dotnet build
 
-Will install newsmake to 'usr/local/bin'.
+To install:
 
-To build and install on Windows:
-
-    cd build
-    cmake ..
-    msbuild newsmake.sln /p:Configuration="Release" /p:Platform="Win32" /m /verbosity:minimal
-    cpack -G "WIX;7Z;NSIS;TZ;TXZ;TGZ;TBZ2"
-    cd ..
-
-Then run the generated install exe or msi file.
+    nuget install newsmake
 
 Any bugs can be filed in this repository's built in bug tracker.
 
