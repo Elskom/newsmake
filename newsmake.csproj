@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.0;netcoreapp2.2;netcoreapp2.1;netcoreapp2.0;netstandard2.0;net40;net45;net451;net452;net46;net461;net462;net47;net471;net472</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0;netcoreapp2.2;netcoreapp2.1;netcoreapp2.0;netstandard2.0;</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
     <AssemblyName>newsmake</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Company>Els_kom org.</Company>

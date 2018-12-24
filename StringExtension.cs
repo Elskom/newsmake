@@ -3,13 +3,13 @@
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
 
-namespace newsmake
+namespace Newsmake
 {
 internal static class StringExtension
 {
     internal static string Erase(this string str, int _Off, int _Cnt)
     {
-        return str.Replace(str.Substring(_Off, _Off + _Cnt), "");
+        return str.Replace(str.Substring(_Off, _Off + _Cnt), string.Empty);
     }
 }
 }
