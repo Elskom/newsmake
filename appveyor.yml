@@ -2,6 +2,8 @@ version: 1.0.0a{build}
 image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU
+before_build:
+- ps: nuget restore
 build:
   project: newsmake.sln
   publish_nuget: true
