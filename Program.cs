@@ -5,14 +5,14 @@
 
 namespace Newsmake
 {
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
 
-internal static class Program
-{
-    internal static void formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80)
+    internal static class Program
+    {
+    internal static void Formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80)
     {
         if (input.Length < line_length)
         {
@@ -115,6 +115,7 @@ internal static class Program
                 env_open += 2;
                 string envvar = line.Substring(env_open, env_close - env_open);
                 var envvalue = Environment.GetEnvironmentVariable(envvar);
+
                 // a hack to resolve the current working directory manually...
                 if (envvar.Equals("CD") || envvar.Equals("cd"))
                 {
@@ -135,7 +136,8 @@ internal static class Program
                   return 1;
                 }
               }
-            } while (line.Contains("$("));
+            }
+            while (line.Contains("$("));
 
             if (line.Contains("projname = \""))
             {
@@ -178,7 +180,6 @@ internal static class Program
                 delete_files = false;
               }
             }
-            // user can now output as markdown.
             else if (line.Contains("outputasmd = "))
             {
               output_format_md = line.Equals("outputasmd = true");
@@ -250,7 +251,7 @@ internal static class Program
                     temp += entry_line;
                   }
 
-                  formatline(ref temp, tabs, output_format_md);
+                  Formatline(ref temp, tabs, output_format_md);
                   temp += "\n";
                   section_text += temp;
                 }
@@ -311,5 +312,5 @@ internal static class Program
         }
         return 0;
     }
-}
+    }
 }

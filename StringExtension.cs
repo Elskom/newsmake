@@ -5,11 +5,9 @@
 
 namespace Newsmake
 {
-internal static class StringExtension
-{
-    internal static string Erase(this string str, int _Off, int _Cnt)
+    internal static class StringExtension
     {
-        return str.Replace(str.Substring(_Off, _Off + _Cnt), string.Empty);
+        internal static string Erase(this string str, int offset, int count)
+            => str.Replace(str.Substring(offset, offset + count), string.Empty);
     }
-}
 }
