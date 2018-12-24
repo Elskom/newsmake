@@ -12,10 +12,11 @@ using System.Text;
 
 internal static class Program
 {
-    static void formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80) {
+    internal static void formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80) {
         if (input.Length < line_length) {
             return;
         }
+
         string indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
         int tab_length = 8;
         int indent_line_length = line_length;
@@ -26,25 +27,32 @@ internal static class Program
             if (pos > 0 && last_pos == pos) {
                 throw new Exception("bug");
             }
+
             last_pos = pos;
-            if (input[pos] == ' ' && pos > 0)
+            if (input[pos] == ' ' && pos > 0) {
                 ++pos;
+            }
+
             if (pos >= input.Length) {
                 break;
             }
+
             string sub_s = input.Substring(pos, indent_line_length);
             int last_space = sub_s.LastIndexOf(' ');
             if (last_space == 0 || last_space == int.MaxValue || pos + indent_line_length >= input.Length) {
                 last_space = sub_s.Length;
             }
+
             if (last_space != sub_s.Length) {
                 sub_s = sub_s.Substring(0, last_space);
             }
+
             output.Append(sub_s);
             pos += last_space;
             if (pos >= input.Length) {
                 break;
             }
+
             output.Append('\n' + indent);
             indent_line_length = line_length - tab_length;
         }
@@ -111,6 +119,7 @@ internal static class Program
                 }
               }
             } while (line.Contains("$("));
+
             if (line.Contains("projname = \"")) {
               project_name = line;
               project_name = project_name.Erase(0, 12);
@@ -159,6 +168,7 @@ internal static class Program
                 else {
                   section_string = "                          Whats new in v";
                 }
+
                 section_string += imported_folder;
                 section_string += "\n==============================================================================\n";
                 first_import = false;
@@ -171,11 +181,13 @@ internal static class Program
                     "\n==============================================================================\n";
                   section_string += "                             ";
                 }
+
                 section_string += project_name;
                 section_string += " v";
                 section_string += imported_folder;
                 section_string += "\n==============================================================================\n";
               }
+
               var section_text = string.Empty;
               if (Directory.Exists(Directory.GetCurrentDirectory() + "/" + imported_folder)) {
                 foreach (var imported_path in
@@ -192,6 +204,7 @@ internal static class Program
                   else {
                     temp = "+ ";
                   }
+
                   var entry_lines = File.ReadAllLines(imported_path);
                   foreach (var entry_line in entry_lines) {
                     temp += entry_line;
@@ -201,6 +214,7 @@ internal static class Program
                   section_text += temp;
                 }
               }
+
               if (delete_files && !section_text.Equals(string.Empty)) {
                 // save section text and then delete the folder.
                 var section_file = File.OpenWrite(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section");
@@ -209,6 +223,7 @@ internal static class Program
                 foreach (var imported_path in Directory.GetFiles(Directory.GetCurrentDirectory() + "/" + imported_folder, "*", SearchOption.AllDirectories)) {
                   File.Delete(imported_path);
                 }
+
                 Directory.Delete(Directory.GetCurrentDirectory() + "/" + imported_folder);
               }
               if (section_text.Equals(string.Empty)) {
@@ -217,6 +232,7 @@ internal static class Program
                   section_text = File.ReadAllText(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section");
                 }
               }
+
               section_string += section_text;
               section_data.Add(section_string);
             }
@@ -227,15 +243,18 @@ internal static class Program
           if (!finfo.Directory.Exists) {
             finfo.Directory.Create();
           }
+
           var output_file = finfo.OpenWrite();
           foreach (var section in section_data) {
             output_file.Write(Encoding.UTF8.GetBytes(section), 0, Encoding.UTF8.GetByteCount(section));
           }
+
           output_file.Dispose();
           Console.WriteLine("Successfully Generated '{outputfile_name}'.");
         }
                 }
             }
+
             if (!found_master_file) {
                 Console.Error.WriteLine("Fatal: no *.master file found.");
                 return 1;
