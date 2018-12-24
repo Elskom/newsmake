@@ -12,75 +12,75 @@ namespace Newsmake
 
     internal static class Program
     {
-    internal static void Formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80)
-    {
-        if (input.Length < line_length)
+        internal static void Formatline(ref string input, bool tabs, bool output_format_md, int line_length = 80)
         {
-            return;
+            if (input.Length < line_length)
+            {
+                return;
+            }
+
+            string indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
+            int tab_length = 8;
+            int indent_line_length = line_length;
+            int pos = 0;
+            int last_pos = 0;
+            StringBuilder output = new StringBuilder();
+            while (true)
+            {
+                if (pos > 0 && last_pos == pos)
+                {
+                    throw new Exception("bug");
+                }
+
+                last_pos = pos;
+                if (input[pos] == ' ' && pos > 0)
+                {
+                    ++pos;
+                }
+
+                if (pos >= input.Length)
+                {
+                    break;
+                }
+
+                string sub_s = input.Substring(pos, indent_line_length);
+                int last_space = sub_s.LastIndexOf(' ');
+                if (last_space == 0 || last_space == int.MaxValue || pos + indent_line_length >= input.Length)
+                {
+                    last_space = sub_s.Length;
+                }
+
+                if (last_space != sub_s.Length)
+                {
+                    sub_s = sub_s.Substring(0, last_space);
+                }
+
+                output.Append(sub_s);
+                pos += last_space;
+                if (pos >= input.Length)
+                {
+                    break;
+                }
+
+                output.Append('\n' + indent);
+                indent_line_length = line_length - tab_length;
+            }
+
+            input = output.ToString();
         }
 
-        string indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
-        int tab_length = 8;
-        int indent_line_length = line_length;
-        int pos = 0;
-        int last_pos = 0;
-        StringBuilder output = new StringBuilder();
-        while (true)
+        internal static int Main(string[] args)
         {
-            if (pos > 0 && last_pos == pos)
+            if (args.Length > 1)
             {
-                throw new Exception("bug");
+                string command = args[1];
+                if (command.Equals("--version"))
+                {
+                    Console.WriteLine("Version: 1.0.0");
+                }
             }
-
-            last_pos = pos;
-            if (input[pos] == ' ' && pos > 0)
+            else
             {
-                ++pos;
-            }
-
-            if (pos >= input.Length)
-            {
-                break;
-            }
-
-            string sub_s = input.Substring(pos, indent_line_length);
-            int last_space = sub_s.LastIndexOf(' ');
-            if (last_space == 0 || last_space == int.MaxValue || pos + indent_line_length >= input.Length)
-            {
-                last_space = sub_s.Length;
-            }
-
-            if (last_space != sub_s.Length)
-            {
-                sub_s = sub_s.Substring(0, last_space);
-            }
-
-            output.Append(sub_s);
-            pos += last_space;
-            if (pos >= input.Length)
-            {
-                break;
-            }
-
-            output.Append('\n' + indent);
-            indent_line_length = line_length - tab_length;
-        }
-
-        input = output.ToString();
-    }
-
-    internal static int Main(string[] args)
-    {
-        if (args.Length > 1)
-        {
-            string command = args[1];
-            if (command.Equals("--version"))
-            {
-                Console.WriteLine("Version: 1.0.0");
-            }
-        }
-        else
-        {
     var ext = ".master";
     var project_name = string.Empty;
     var outputfile_name = string.Empty;
@@ -303,17 +303,17 @@ namespace Newsmake
           output_file.Dispose();
           Console.WriteLine("Successfully Generated '{outputfile_name}'.");
         }
+                    }
+                }
+
+                if (!found_master_file)
+                {
+                    Console.Error.WriteLine("Fatal: no *.master file found.");
+                    return 1;
                 }
             }
 
-            if (!found_master_file)
-            {
-                Console.Error.WriteLine("Fatal: no *.master file found.");
-                return 1;
-            }
+            return 0;
         }
-
-        return 0;
-    }
     }
 }
