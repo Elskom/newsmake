@@ -270,6 +270,7 @@ namespace Newsmake
 
                 Directory.Delete(Directory.GetCurrentDirectory() + "/" + imported_folder);
               }
+
               if (section_text.Equals(string.Empty))
               {
                 // load saved *.section file.
@@ -284,6 +285,7 @@ namespace Newsmake
             }
           }
         }
+
         if (!outputfile_name.Equals(string.Empty))
         {
           var finfo = new FileInfo(outputfile_name);
@@ -310,6 +312,7 @@ namespace Newsmake
                 return 1;
             }
         }
+
         return 0;
     }
     }
