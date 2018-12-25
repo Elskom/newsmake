@@ -8,6 +8,6 @@ namespace Newsmake
     internal static class StringExtension
     {
         internal static string Erase(this string str, int offset, int count)
-            => str.Replace(str.Substring(offset, offset + count), string.Empty);
+            => str.Replace(str.Substring(offset, count), string.Empty);
     }
 }

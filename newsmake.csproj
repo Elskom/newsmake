@@ -15,8 +15,8 @@
     <PackageLicenseUrl>https://github.com/Elskom/newsmake/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright (c) 2018</Copyright>
     <Description>News / changelog making tool.</Description>
-    <PackageReleaseNotes>Fixed a fatal bug.</PackageReleaseNotes>
-    <Version>1.0.1</Version>
+    <PackageReleaseNotes>Fixed a substring bug which caused crashes.</PackageReleaseNotes>
+    <Version>1.0.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
