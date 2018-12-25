@@ -284,6 +284,14 @@ namespace Newsmake
               section_data.Add(section_string);
             }
           }
+          else
+          {
+            if (!p.Equals(Directory.GetCurrentDirectory()) && !found_master_file)
+            {
+              // set the current directory to p.
+              Directory.SetCurrentDirectory(p);
+            }
+          }
         }
 
         if (!outputfile_name.Equals(string.Empty))
