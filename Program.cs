@@ -97,6 +97,9 @@ namespace Newsmake
       {
         found_master_file = true;
         Console.WriteLine("Processing {p}...");
+
+        // set the current directory to p.
+        Directory.SetCurrentDirectory(p);
         var master_file = File.ReadAllLines(p);
         for (var i = 0; i < master_file.Length; i++)
         {
@@ -282,14 +285,6 @@ namespace Newsmake
 
               section_string += section_text;
               section_data.Add(section_string);
-            }
-          }
-          else
-          {
-            if (!p.Equals(Directory.GetCurrentDirectory()) && !found_master_file)
-            {
-              // set the current directory to p.
-              Directory.SetCurrentDirectory(p);
             }
           }
         }
