@@ -2,10 +2,13 @@ version: 1.0.0a{build}
 image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU
-before_build:
-- ps: nuget restore
-build:
-- ps: dotnet build
+build_script:
+- ps: ->
+    nuget restore
+
+    dotnet build
+
+    dotnet pack --configuration Release --include-symbols --no-build
 test: off
 deploy:
 - provider: NuGet
