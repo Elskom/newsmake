@@ -3,7 +3,7 @@ image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU
 build_script:
-- ps: ->
+- ps: >-
     nuget restore
 
     dotnet build
