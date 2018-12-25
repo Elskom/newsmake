@@ -76,7 +76,7 @@ namespace Newsmake
                 string command = args[1];
                 if (command.Equals("--version"))
                 {
-                    Console.WriteLine("Version: 1.0.2");
+                    Console.WriteLine("Version: 1.0.3");
                 }
             }
             else
@@ -304,7 +304,7 @@ namespace Newsmake
           }
 
           output_file.Dispose();
-          Console.WriteLine("Successfully Generated '{outputfile_name}'.");
+          Console.WriteLine($"Successfully Generated '{outputfile_name}'.");
         }
                     }
                 }
