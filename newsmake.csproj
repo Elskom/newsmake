@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramewors>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <AssemblyName>newsmake</AssemblyName>
