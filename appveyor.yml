@@ -5,11 +5,7 @@ platform: Any CPU
 before_build:
 - ps: nuget restore
 build:
-  project: newsmake.sln
-  publish_nuget: true
-  publish_nuget_symbols: true
-  parallel: true
-  verbosity: minimal
+- ps: dotnet build
 test: off
 deploy:
 - provider: NuGet
