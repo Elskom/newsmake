@@ -96,10 +96,10 @@ namespace Newsmake
       if (p.EndsWith(ext))
       {
         found_master_file = true;
-        Console.WriteLine("Processing {p}...");
+        Console.WriteLine($"Processing {p}...");
 
         // set the current directory to p.
-        Directory.SetCurrentDirectory(p);
+        Directory.SetCurrentDirectory(new FileInfo(p).Directory.FullName);
         var master_file = File.ReadAllLines(p);
         for (var i = 0; i < master_file.Length; i++)
         {
