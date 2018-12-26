@@ -1,4 +1,4 @@
-version: 1.0.3a{build}
+version: 1.0.4a{build}
 image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU

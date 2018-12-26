@@ -76,7 +76,7 @@ namespace Newsmake
                 string command = args[1];
                 if (command.Equals("--version"))
                 {
-                    Console.WriteLine("Version: 1.0.3");
+                    Console.WriteLine("Version: 1.0.4");
                 }
             }
             else
