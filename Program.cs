@@ -43,6 +43,9 @@ namespace Newsmake
                     break;
                 }
 
+                Console.WriteLine($"pos: {pos}");
+                Console.WriteLine($"indent_line_length: {indent_line_length}");
+                Console.WriteLine($"input.Length - pos: {input.Length - pos}");
                 string sub_s = input.Substring(pos, input.Length - pos < indent_line_length ? indent_line_length : input.Length - pos);
                 int last_space = sub_s.LastIndexOf(' ');
                 if (last_space == 0 || last_space == int.MaxValue || pos + indent_line_length >= input.Length)

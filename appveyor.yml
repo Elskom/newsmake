@@ -9,7 +9,11 @@ build_script:
     dotnet build
 
     dotnet pack --configuration Release --include-symbols --no-build
-test: off
+test_script:
+- ps: >-
+    dotnet tool install --global newsmake --add-source "./bin/Any CPU/Release/"
+
+    newsmake
 artifacts:
 - path: '**\*.nupkg'
   name: myartifact
