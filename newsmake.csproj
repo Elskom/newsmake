@@ -13,7 +13,7 @@
     <RepositoryUrl>https://github.com/Elskom/newsmake/</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Elskom/newsmake/</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/Elskom/newsmake/blob/master/LICENSE</PackageLicenseUrl>
-    <Copyright>Copyright (c) 2018</Copyright>
+    <Copyright>Copyright (c) 2018-2019</Copyright>
     <Description>News / changelog making tool.</Description>
     <PackageReleaseNotes>Actually fixed the substring bug which caused crashes.</PackageReleaseNotes>
     <Version>1.0.4</Version>

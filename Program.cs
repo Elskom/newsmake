@@ -1,4 +1,4 @@
-// Copyright (c) 2018, Els_kom org.
+// Copyright (c) 2018-2019, Els_kom org.
 // https://github.com/Elskom/
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
