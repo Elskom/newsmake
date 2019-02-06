@@ -1,4 +1,7 @@
 # newsmake
+
+[![NuGet Badge](https://buildstats.info/nuget/newsmake?includePreReleases=true)](https://www.nuget.org/packages/newsmake/)
+
 News / changelog making tool.
 
 Current: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake)
