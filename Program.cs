@@ -19,12 +19,12 @@ namespace Newsmake
                 return;
             }
 
-            string indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
-            int tab_length = 8;
-            int indent_line_length = line_length;
-            int pos = 0;
-            int last_pos = 0;
-            StringBuilder output = new StringBuilder();
+            var indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
+            var tab_length = 8;
+            var indent_line_length = line_length;
+            var pos = 0;
+            var last_pos = 0;
+            var output = new StringBuilder();
             while (true)
             {
                 if (pos > 0 && last_pos == pos)
@@ -43,8 +43,8 @@ namespace Newsmake
                     break;
                 }
 
-                string sub_s = input.Substring(pos, input.Length - pos > indent_line_length ? indent_line_length : input.Length - pos);
-                int last_space = sub_s.LastIndexOf(' ');
+                var sub_s = input.Substring(pos, input.Length - pos > indent_line_length ? indent_line_length : input.Length - pos);
+                var last_space = sub_s.LastIndexOf(' ');
                 if (last_space == 0 || last_space == int.MaxValue || pos + indent_line_length >= input.Length)
                 {
                     last_space = sub_s.Length;
@@ -73,7 +73,7 @@ namespace Newsmake
         {
             if (args.Length > 1)
             {
-                string command = args[1];
+                var command = args[1];
                 if (command.Equals("--version"))
                 {
                     Console.WriteLine("Version: 1.0.4");
@@ -111,12 +111,12 @@ namespace Newsmake
                                 {
                                     // get environment variable name.
                                     // find the "$(" and make a substring then find the first ")"
-                                    int env_open = line.IndexOf("$(");
-                                    int env_close = line.IndexOf(")");
+                                    var env_open = line.IndexOf("$(");
+                                    var env_close = line.IndexOf(")");
                                     if (env_open != env_close)
                                     {
                                         env_open += 2;
-                                        string envvar = line.Substring(env_open, env_close - env_open);
+                                        var envvar = line.Substring(env_open, env_close - env_open);
                                         var envvalue = Environment.GetEnvironmentVariable(envvar);
 
                                         // a hack to resolve the current working directory manually...
@@ -174,14 +174,7 @@ namespace Newsmake
                                 }
                                 else if (line.Contains("deletechunkentryfiles = "))
                                 {
-                                    if (!devmode)
-                                    {
-                                        delete_files = line.Equals("deletechunkentryfiles = true");
-                                    }
-                                    else
-                                    {
-                                        delete_files = false;
-                                    }
+                                    delete_files = !devmode ? line.Equals("deletechunkentryfiles = true") : false;
                                 }
                                 else if (line.Contains("outputasmd = "))
                                 {
@@ -189,21 +182,13 @@ namespace Newsmake
                                 }
                                 else if (line.Contains("import \""))
                                 {
-                                    string imported_folder = line;
+                                    var imported_folder = line;
                                     imported_folder = imported_folder.Erase(0, 8);
                                     imported_folder = imported_folder.Erase(imported_folder.Length - 1, 1);
                                     var section_string = string.Empty;
                                     if (first_import)
                                     {
-                                        if (output_format_md)
-                                        {
-                                            section_string = "Whats new in v";
-                                        }
-                                        else
-                                        {
-                                            section_string = "                          Whats new in v";
-                                        }
-
+                                        section_string = output_format_md ? "Whats new in v" : "                          Whats new in v";
                                         section_string += imported_folder;
                                         section_string += "\n==============================================================================\n";
                                         first_import = false;
@@ -231,23 +216,7 @@ namespace Newsmake
                                         foreach (var imported_path in
                                           Directory.GetFiles(Directory.GetCurrentDirectory() + "/" + imported_folder, "*", SearchOption.AllDirectories))
                                         {
-                                            string temp;
-                                            if (!output_format_md)
-                                            {
-                                                if (tabs)
-                                                {
-                                                    temp = "\t+ ";
-                                                }
-                                                else
-                                                {
-                                                    temp = "    + ";
-                                                }
-                                            }
-                                            else
-                                            {
-                                                temp = "+ ";
-                                            }
-
+                                            var temp = !output_format_md ? tabs ? "\t+ " : "    + " : "+ ";
                                             var entry_lines = File.ReadAllLines(imported_path);
                                             foreach (var entry_line in entry_lines)
                                             {
@@ -263,9 +232,11 @@ namespace Newsmake
                                     if (delete_files && !section_text.Equals(string.Empty))
                                     {
                                         // save section text and then delete the folder.
-                                        var section_file = File.OpenWrite(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section");
-                                        section_file.Write(Encoding.UTF8.GetBytes(section_text), 0, Encoding.UTF8.GetByteCount(section_text));
-                                        section_file.Dispose();
+                                        using (var section_file = File.OpenWrite(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section"))
+                                        {
+                                            section_file.Write(Encoding.UTF8.GetBytes(section_text), 0, Encoding.UTF8.GetByteCount(section_text));
+                                        }
+
                                         foreach (var imported_path in Directory.GetFiles(Directory.GetCurrentDirectory() + "/" + imported_folder, "*", SearchOption.AllDirectories))
                                         {
                                             File.Delete(imported_path);
@@ -297,13 +268,14 @@ namespace Newsmake
                                 finfo.Directory.Create();
                             }
 
-                            var output_file = finfo.OpenWrite();
-                            foreach (var section in section_data)
+                            using (var output_file = finfo.OpenWrite())
                             {
-                                output_file.Write(Encoding.UTF8.GetBytes(section), 0, Encoding.UTF8.GetByteCount(section));
+                                foreach (var section in section_data)
+                                {
+                                    output_file.Write(Encoding.UTF8.GetBytes(section), 0, Encoding.UTF8.GetByteCount(section));
+                                }
                             }
 
-                            output_file.Dispose();
                             Console.WriteLine($"Successfully Generated '{outputfile_name}'.");
                         }
                     }
