@@ -16,6 +16,15 @@ To install:
 
     dotnet tool install -g newsmake
 
+To update:
+
+    dotnet tool update -g newsmake
+
+To uninstall:
+
+    dotnet tool uninstall -g newsmake
+
+
 Any bugs can be filed in this repository's built in bug tracker.
 
 This is for taking an changelog master config file with folders of
