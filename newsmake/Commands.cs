@@ -82,8 +82,8 @@ namespace Newsmake
                             if (line.Contains("projname = \""))
                             {
                                 project_name = line;
-                                project_name = project_name.Erase(0, 12);
-                                project_name = project_name.Erase(project_name.Length - 1, 1);
+                                project_name = project_name.Replace(project_name.Substring(0, 12), string.Empty);
+                                project_name = project_name.Replace(project_name.Substring(project_name.Length - 1, 1), string.Empty);
                             }
                             else if (!line.Contains("projname = \"") && project_name.Equals(string.Empty))
                             {
@@ -97,8 +97,8 @@ namespace Newsmake
                             else if (line.Contains("genfilename = \""))
                             {
                                 outputfile_name = line;
-                                outputfile_name = outputfile_name.Erase(0, 15);
-                                outputfile_name = outputfile_name.Erase(outputfile_name.Length - 1, 1);
+                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(0, 15), string.Empty);
+                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(outputfile_name.Length - 1, 1), string.Empty);
                             }
                             else if (!line.Contains("genfilename = \"") && outputfile_name.Equals(string.Empty))
                             {
@@ -120,8 +120,8 @@ namespace Newsmake
                             else if (line.Contains("import \""))
                             {
                                 var imported_folder = line;
-                                imported_folder = imported_folder.Erase(0, 8);
-                                imported_folder = imported_folder.Erase(imported_folder.Length - 1, 1);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty);
                                 var section_string = string.Empty;
                                 if (first_import)
                                 {
@@ -389,8 +389,8 @@ namespace Newsmake
                             else if (line.Contains("import \""))
                             {
                                 var imported_folder = line;
-                                imported_folder = imported_folder.Erase(0, 8);
-                                imported_folder = imported_folder.Erase(imported_folder.Length - 1, 1);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty);
                                 var section_text = string.Empty;
                                 if (Directory.Exists($"{fi.Directory.FullName}{Path.DirectorySeparatorChar}{imported_folder}"))
                                 {
@@ -475,14 +475,14 @@ namespace Newsmake
                     sub_s = sub_s.Substring(0, last_space);
                 }
 
-                output.Append(sub_s);
+                _ = output.Append(sub_s);
                 pos += last_space;
                 if (pos >= input.Length)
                 {
                     break;
                 }
 
-                output.Append('\n' + indent);
+                _ = output.Append('\n' + indent);
                 indent_line_length = line_length - tab_length;
             }
 

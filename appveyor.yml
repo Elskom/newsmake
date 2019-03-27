@@ -8,7 +8,7 @@ install:
 
     {
 
-    Write-Host "Installing .NET Core SDK..." -ForegroundColor Cyan
+    Write-Host "Installing .NET Core 3.0.100-preview-010184 SDK..." -ForegroundColor Cyan
 
     Write-Host "Downloading..."
 
@@ -25,7 +25,7 @@ install:
     Write-Host "Installed" -ForegroundColor Green
 
 
-    Write-Host "Installing .NET Core runtime..." -ForegroundColor Cyan
+    Write-Host "Installing .NET Core 3.0.0-preview-27324-5 runtime..." -ForegroundColor Cyan
 
     Write-Host "Downloading..."
 
@@ -41,9 +41,28 @@ install:
 
     Write-Host "Installed" -ForegroundColor Green
 
+
+    Write-Host "Installing .NET Framework 4.8 Targeting Pack..." -ForegroundColor Cyan
+
+    Write-Host "Downloading..."
+
+    $exePath = "$env:TEMP\ndp48-devpack-enu.exe"
+
+    (New-Object Net.WebClient).DownloadFile('https://download.visualstudio.microsoft.com/download/pr/9854b5f2-2341-4136-ad7d-1d881ab8d603/e3a011f2a41a59b086f78d64e1c7a3fc/ndp48-devpack-enu.exe', $exePath)
+
+    Write-Host "Installing..."
+
+    cmd /c start /wait "$exePath" /quiet /norestart
+
+    del $exePath
+
+    Write-Host "Installed" -ForegroundColor Green
+
     }
-build_script:
+before_build:
 - ps: >-
+    nuget sources Add -Name "Generic Roslyn Analyzers" -Source https://dotnet.myget.org/F/roslyn-analyzers/api/v3/index.json
+
     nuget restore
 
     dotnet build
@@ -53,7 +72,7 @@ test_script:
 - ps: >-
     dotnet tool install --global newsmake --add-source "./bin/Any CPU/Release/"
 
-    newsmake
+    newsmake build
 artifacts:
 - path: '**\*.nupkg'
   name: myartifact

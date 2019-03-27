@@ -5,10 +5,19 @@
 
 namespace Newsmake
 {
+    using System;
+    using System.Messaging;
+    using System.Reflection;
+    using Elskom.Generic.Libs;
+
     internal static class Program
     {
+        [MiniDump(Text = "Please send a copy of {0} to https://github.com/Elskom/newsmake/issues by making an issue and attaching the log(s) and mini-dump(s).", DumpType = MinidumpTypes.ValidTypeFlags)]
         internal static int Main(string[] args)
         {
+            MiniDump.DumpFailed += MiniDump_DumpFailed;
+            MiniDump.DumpGenerated += MiniDump_DumpGenerated;
+            _ = Assembly.GetEntryAssembly().EntryPoint.GetCustomAttributes(false);
             var commandParsor = new CommandParsor(args);
             commandParsor.AddCommand(new Command("--version", "Global", "Shows the version of this command-line program.", (string[] commands) => Commands.VersionCommand()));
             commandParsor.AddCommand(new Command("build", "Global", "builds a changelog or news file from any *.master file in the current or sub directory.", (string[] commands) => Commands.BuildCommand()));
@@ -26,5 +35,14 @@ namespace Newsmake
 
             return 0;
         }
+
+        private static void MiniDump_DumpGenerated(object sender, MessageEventArgs e)
+        {
+            Console.WriteLine($"{e.Caption}: {e.Text}");
+            Environment.Exit(1);
+        }
+
+        private static void MiniDump_DumpFailed(object sender, MessageEventArgs e)
+            => Console.WriteLine($"{e.Caption}: {e.Text}");
     }
 }
