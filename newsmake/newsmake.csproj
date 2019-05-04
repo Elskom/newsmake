@@ -110,12 +110,30 @@
     <PackageReference Include="System.Linq">
       <Version>4.3.0</Version>
     </PackageReference>
-    <ProjectReference Include="../../MiniDump/MiniDump.csproj" />
-    <ProjectReference Include="..\..\System.Runtime.InteropServices.GitInformation\src\GitInformation\System.Runtime.InteropServices.GitInformation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="../stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj')">
+    <ProjectReference Include="..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj')">
+    <PackageReference Include="AraHaan.GitInformation">
+      <Version>1.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('../../MiniDump/MiniDump.csproj')">
+    <ProjectReference Include="../../MiniDump/MiniDump.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!Exists('../../MiniDump/MiniDump.csproj')">
+    <PackageReference Include="MiniDump">
+      <Version>1.0.3</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
