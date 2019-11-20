@@ -6,6 +6,7 @@
 namespace Newsmake
 {
     using System;
+    using System.Collections.Generic;
     using System.Messaging;
     using System.Reflection;
     using Elskom.Generic.Libs;
@@ -19,23 +20,15 @@ namespace Newsmake
             MiniDump.DumpMessage += MiniDump_DumpMessage;
             _ = Assembly.GetEntryAssembly().EntryPoint.GetCustomAttributes(false);
             var commandParser = new CommandParser(args);
-            commandParser += new Command[]
+            commandParser += new Dictionary<string, Command>
             {
-                new Command("--version", "Global", "Shows the version of this command-line program.", (string[] commands) => Commands.VersionCommand()),
-                new Command("build", "Global", "builds a changelog or news file from any *.master file in the current or sub directory.", (string[] commands) => Commands.BuildCommand()),
-                new Command("release", "new", "Creates a new pending release folder and imports it in the *.master file in the current or sub directory.", (string[] release) => Commands.NewReleaseCommand(release)),
-                new Command("entry", "new", "Creates a new entry file for the current pending release.", (string[] commands) => Commands.NewEntryCommand()),
-                new Command("release", "finalize", "Finalizes a pending release to a section file.", (string[] commands) => Commands.FinalizeReleaseCommand()),
+                { "Global", new Command("--version", "Shows the version of this command-line program.", (string[] commands) => Commands.VersionCommand()) },
+                { "Global", new Command("build", "builds a changelog or news file from any *.master file in the current or sub directory.", (string[] commands) => Commands.BuildCommand()) },
+                { "new", new Command("release", "Creates a new pending release folder and imports it in the *.master file in the current or sub directory.", (string[] release) => Commands.NewReleaseCommand(release)) },
+                { "new", new Command("entry", "Creates a new entry file for the current pending release.", (string[] commands) => Commands.NewEntryCommand()) },
+                { "finalize", new Command("release", "Finalizes a pending release to a section file.", (string[] commands) => Commands.FinalizeReleaseCommand()) },
             };
-            if (commandParser.Length == 0)
-            {
-                commandParser.ShowHelp();
-            }
-            else
-            {
-                commandParser.ProcessCommands();
-            }
-
+            commandParser.ProcessCommands();
             return 0;
         }
 

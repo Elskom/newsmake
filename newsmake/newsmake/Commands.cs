@@ -9,12 +9,13 @@ namespace Newsmake
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
 
     internal static class Commands
     {
         internal static void VersionCommand()
-            => Console.WriteLine("Version: 1.0.5");
+            => Console.WriteLine($"Version: {Assembly.GetEntryAssembly().GetName().Version}");
 
         internal static void BuildCommand()
         {

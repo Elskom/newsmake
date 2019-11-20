@@ -13,12 +13,11 @@ namespace Newsmake
     internal class CommandParser
     {
         private readonly string[] args;
-        private readonly List<Command> cmds;
 
         public CommandParser(string[] args)
         {
             this.args = args;
-            this.cmds = new List<Command>();
+            this.Groups = new List<Group>();
         }
 
         public int Length
@@ -28,62 +27,104 @@ namespace Newsmake
 
         public string DocsUrl { get; set; } = string.Empty;
 
-        public static CommandParser operator +(CommandParser parsor, Command cmd)
+        private List<Group> Groups { get; set; }
+
+        /*
+        [Obsolete("Do not use this version of operator +; use the Dictionary<string, Command> one as it allows you to save code.", true)]
+        public static CommandParser operator +(CommandParser parser, Group group)
         {
-            parsor.AddCommand(cmd);
-            return parsor;
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
+
+            parser.AddGroup(group);
+            return parser;
         }
 
-        public static CommandParser operator +(CommandParser parsor, Command[] cmds)
+        [Obsolete("Do not use this version of operator +; use the Dictionary<string, Command> one as it allows you to save code.", true)]
+        public static CommandParser operator +(CommandParser parser, Group[] groups)
         {
-            parsor.AddCommands(cmds);
-            return parsor;
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
+
+            parser.AddGroups(groups);
+            return parser;
         }
+        */
 
-        public void AddCommand(Command cmd)
-            => this.cmds.Add(cmd);
+        public static CommandParser operator +(CommandParser parser, Dictionary<string, Command> cmds)
+        {
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
 
-        public void AddCommands(Command[] cmds)
-            => this.cmds.AddRange(cmds);
+            foreach (var command in cmds)
+            {
+                if (parser.GetGroup(command.Key) == null)
+                {
+                    parser.AddGroup(new Group(command.Key));
+                }
+
+                var group = parser.GetGroup(command.Key);
+                group += command.Value;
+                parser.Replace(new Dictionary<string, Group> { { group.GroupName, group }, });
+            }
+
+            return parser;
+        }
 
         public void ProcessCommands()
         {
-            var cmdgroup = string.Empty;
-            var foundcmd = false;
-            var foundgrp = false;
-            var currentArg = string.Empty;
-            foreach (var arg in this.args)
+            if (this.Length == 0)
             {
-                currentArg = arg;
-                foreach (var cmd in this.cmds)
+                this.ShowHelp();
+            }
+            else
+            {
+                var cmdgroup = string.Empty;
+                var foundcmd = false;
+                var foundgrp = false;
+                var currentArg = string.Empty;
+                foreach (var arg in this.args)
                 {
-                    if (cmd.CommandGroup.Equals(arg))
+                    currentArg = arg;
+                    foreach (var group in this.Groups)
                     {
-                        foundgrp = true;
-                        cmdgroup = cmd.CommandGroup;
-                    }
+                        // if (cmd.Group == null && cmd.Group.GroupName.Equals(arg))
+                        // {
+                        //     foundgrp = true;
+                        //     cmdgroup = cmd.Group.GroupName;
+                        // }
+                        /*else */
+                        if (/*cmd.Group != null && */group.CommandEquals(arg) && (group.GroupName.Equals(cmdgroup) || group.GroupName.Equals("Global")))
+                        {
+                            foundcmd = true;
 
-                    if (cmd.Equals(arg) && (cmd.CommandGroup.Equals(cmdgroup) || cmd.CommandGroup.Equals("Global")))
-                    {
-                        foundcmd = true;
-
-                        // now we got to filter the commands, stripping the ones already processed for passing to the invoked command.
-                        var tmp = this.args.ToList();
-                        var index = tmp.IndexOf(arg);
-                        tmp.RemoveRange(0, index + 1);
-                        cmd.InvokeCommand(tmp.ToArray());
-                        tmp.Clear();
+                            // now we got to filter the commands, stripping the ones already processed for passing to the invoked command.
+                            var tmp = this.args.ToList();
+                            var index = tmp.IndexOf(arg);
+                            tmp.RemoveRange(0, index + 1);
+                            group.FindCommand(arg).InvokeCommand(tmp.ToArray());
+                            tmp.Clear();
+                        }
                     }
                 }
-            }
 
-            if (!foundcmd && !foundgrp)
-            {
-                Console.Error.WriteLine($"Error: invalid command-line option '{currentArg}'.");
+                if (!foundcmd && !foundgrp)
+                {
+                    Console.Error.WriteLine($"Error: invalid command-line option '{currentArg}'.");
+                }
             }
         }
 
-        public void ShowHelp()
+        private void ShowHelp()
         {
             // thanks dotnet-cli for the idea of the help contents.
             Console.WriteLine($"Version: {Assembly.GetEntryAssembly().GetName().Version}");
@@ -91,15 +132,61 @@ namespace Newsmake
             Console.WriteLine();
             Console.WriteLine("Available commands:");
             Console.WriteLine();
-            foreach (var cmd in this.cmds)
+            foreach (var group in this.Groups)
             {
-                Console.WriteLine($" {(cmd.CommandGroup.Equals("Global") ? string.Empty : cmd.CommandGroup)} {cmd.CommandSwitch}\t{cmd.CommandDescription}");
-                Console.WriteLine();
+                foreach (var cmd in group.Commands)
+                {
+                    Console.WriteLine($" {(group.GroupName.Equals("Global") ? string.Empty : group.GroupName + " ")}{cmd.CommandSwitch}\t{cmd.CommandDescription}");
+                    Console.WriteLine();
+                }
             }
 
             if (this.HasDocs)
             {
                 Console.WriteLine($"For more information, visit {this.DocsUrl}");
+            }
+        }
+
+        private Group GetGroup(string groupName)
+        {
+            foreach (var group in this.Groups)
+            {
+                if (group.GroupName.Equals(groupName))
+                {
+                    return group;
+                }
+            }
+
+            return null;
+        }
+
+        private int GetGroupIndex(string groupName)
+        {
+            foreach (var group in this.Groups)
+            {
+                if (group.GroupName.Equals(groupName))
+                {
+                    return this.Groups.IndexOf(group);
+                }
+            }
+
+            return -1; // to be consistant with IndexOf()!!!
+        }
+
+        private void AddGroup(Group group)
+            => this.Groups.Add(group);
+
+        /*
+        [Obsolete("Not needed anymore.", true)]
+        private void AddGroups(Group[] groups)
+            => this.Groups.AddRange(groups);
+        */
+
+        private void Replace(Dictionary<string, Group> groups)
+        {
+            foreach (var item in groups)
+            {
+                this.Groups[this.GetGroupIndex(item.Key)] = item.Value;
             }
         }
     }

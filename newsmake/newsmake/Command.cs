@@ -11,24 +11,36 @@ namespace Newsmake
     {
         private readonly Action<string[]> commandCode;
 
-        internal Command(string commandSwitch, string commandGroup, string commandDescr, Action<string[]> commandCode)
+        internal Command(string commandSwitch, string commandDescr, Action<string[]> commandCode)
         {
             this.CommandSwitch = commandSwitch;
-            this.CommandGroup = commandGroup;
             this.CommandDescription = commandDescr;
             this.commandCode = commandCode;
         }
 
-        internal string CommandGroup { get; private set; }
+        private Command()
+        {
+        }
+
+        internal Group Group { get; set; }
 
         internal string CommandDescription { get; private set; }
 
         internal string CommandSwitch { get; private set; }
 
         internal bool Equals(string value)
-            => this.CommandSwitch.Equals(value);
+            => this.CommandSwitch != null ? this.CommandSwitch.Equals(value) : false;
 
         internal void InvokeCommand(string[] commands)
-            => this.commandCode.Invoke(commands);
+        {
+            if (this.commandCode != null)
+            {
+                this.commandCode.Invoke(commands);
+            }
+            else
+            {
+                throw new InvalidOperationException("Calling InvokeCommand on a object with no code to invoke.");
+            }
+        }
     }
 }

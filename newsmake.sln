@@ -4,8 +4,6 @@ VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "newsmake", "newsmake\newsmake.csproj", "{0C89B7A2-A218-49E4-B545-5B044A45F977}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectSystem", "ProjectSystem\ProjectSystem.csproj", "{03045E3C-5850-4663-96E5-2F8E2FA43CDC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,10 +14,6 @@ Global
 		{0C89B7A2-A218-49E4-B545-5B044A45F977}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C89B7A2-A218-49E4-B545-5B044A45F977}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C89B7A2-A218-49E4-B545-5B044A45F977}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03045E3C-5850-4663-96E5-2F8E2FA43CDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03045E3C-5850-4663-96E5-2F8E2FA43CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03045E3C-5850-4663-96E5-2F8E2FA43CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03045E3C-5850-4663-96E5-2F8E2FA43CDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
