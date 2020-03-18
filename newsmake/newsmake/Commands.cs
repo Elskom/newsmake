@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2019, Els_kom org.
+﻿// Copyright (c) 2018-2020, Els_kom org.
 // https://github.com/Elskom/
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
@@ -256,6 +256,12 @@ namespace Newsmake
                     }
                 }
 
+                if (string.IsNullOrEmpty(path))
+                {
+                    Console.Error.WriteLine("Fatal: no *.master file found.");
+                    Environment.Exit(1);
+                }
+
                 foreach (var p in Directory.GetDirectories(path))
                 {
                     if (!Directory.Exists($"{path}{Path.DirectorySeparatorChar}{args[0]}"))
@@ -317,6 +323,12 @@ namespace Newsmake
                 }
             }
 
+            if (string.IsNullOrEmpty(path))
+            {
+                Console.Error.WriteLine("Fatal: no *.master file found.");
+                Environment.Exit(1);
+            }
+
             foreach (var p in Directory.GetDirectories(path))
             {
                 var currentFile = "item000";
@@ -367,10 +379,12 @@ namespace Newsmake
             var ext = ".master";
             var tabs = true;
             var output_format_md = false;
+            var found = false;
             foreach (var p in Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories))
             {
                 if (p.EndsWith(ext))
                 {
+                    found = true;
                     var fi = new FileInfo(p);
                     var master_file = File.ReadAllLines(p);
                     for (var i = 0; i < master_file.Length; i++)
@@ -430,6 +444,12 @@ namespace Newsmake
                         }
                     }
                 }
+            }
+
+            if (!found)
+            {
+                Console.Error.WriteLine("Fatal: no *.master file found.");
+                Environment.Exit(1);
             }
         }
 

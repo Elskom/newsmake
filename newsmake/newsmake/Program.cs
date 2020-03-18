@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2019, Els_kom org.
+// Copyright (c) 2018-2020, Els_kom org.
 // https://github.com/Elskom/
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
@@ -20,13 +20,15 @@ namespace Newsmake
             MiniDump.DumpMessage += MiniDump_DumpMessage;
             _ = Assembly.GetEntryAssembly().EntryPoint.GetCustomAttributes(false);
             var commandParser = new CommandParser(args);
-            commandParser += new Dictionary<string, Command>
+            Func<string[], object> func = (commands) => {
+                Commands.VersionCommand();
+                return null;
+            };
+            commandParser += new Dictionary<string, Dictionary<Option, Command>>
             {
-                { "Global", new Command("--version", "Shows the version of this command-line program.", (string[] commands) => Commands.VersionCommand()) },
-                { "Global", new Command("build", "builds a changelog or news file from any *.master file in the current or sub directory.", (string[] commands) => Commands.BuildCommand()) },
-                { "new", new Command("release", "Creates a new pending release folder and imports it in the *.master file in the current or sub directory.", (string[] release) => Commands.NewReleaseCommand(release)) },
-                { "new", new Command("entry", "Creates a new entry file for the current pending release.", (string[] commands) => Commands.NewEntryCommand()) },
-                { "finalize", new Command("release", "Finalizes a pending release to a section file.", (string[] commands) => Commands.FinalizeReleaseCommand()) },
+                { "Global", new Dictionary<Option, Command> { { new Option("--version", "Shows the version of this command-line program.", func), null }, { Option.NullOption, new Command("build", "builds a changelog or news file from any *.master file in the current or sub directory.", (string[] commands) => Commands.BuildCommand()) }, } },
+                { "new", new Dictionary<Option, Command> { { Option.NullOption, new Command("release", "Creates a new pending release folder and imports it in the *.master file in the current or sub directory.", (string[] release) => Commands.NewReleaseCommand(release)) }, { Option.NullOption2, new Command("entry", "Creates a new entry file for the current pending release.", (string[] commands) => Commands.NewEntryCommand()) }, } },
+                { "finalize", new Dictionary<Option, Command> { { Option.NullOption, new Command("release", "Finalizes a pending release to a section file.", (string[] commands) => Commands.FinalizeReleaseCommand()) }, } },
             };
             commandParser.ProcessCommands();
             return 0;

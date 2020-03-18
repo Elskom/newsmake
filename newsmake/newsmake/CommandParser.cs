@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2019, Els_kom org.
+﻿// Copyright (c) 2018-2020, Els_kom org.
 // https://github.com/Elskom/
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
@@ -57,6 +57,35 @@ namespace Newsmake
         }
         */
 
+        /// <summary>
+        /// Adds options to the parser under a group.
+        /// </summary>
+        public static CommandParser operator +(CommandParser parser, Dictionary<string, Option> opts)
+        {
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
+
+            foreach (var option in opts)
+            {
+                if (parser.GetGroup(option.Key) == null)
+                {
+                    parser.AddGroup(new Group(option.Key));
+                }
+
+                var group = parser.GetGroup(option.Key);
+                group += option.Value;
+                parser.Replace(new Dictionary<string, Group> { { group.GroupName, group }, });
+            }
+
+            return parser;
+        }
+
+        /// <summary>
+        /// Adds commands to the parser under a group.
+        /// </summary>
         public static CommandParser operator +(CommandParser parser, Dictionary<string, Command> cmds)
         {
             // if "Global" command group does not exist.
@@ -74,6 +103,91 @@ namespace Newsmake
 
                 var group = parser.GetGroup(command.Key);
                 group += command.Value;
+                parser.Replace(new Dictionary<string, Group> { { group.GroupName, group }, });
+            }
+
+            return parser;
+        }
+
+        /// <summary>
+        /// Adds commands to the parser under a group with options in the group.
+        /// </summary>
+        public static CommandParser operator +(CommandParser parser, Dictionary<string, Dictionary<Option, Command>> cmds)
+        {
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
+
+            foreach (var option in cmds)
+            {
+                if (parser.GetGroup(option.Key) == null)
+                {
+                    parser.AddGroup(new Group(option.Key));
+                }
+
+                var group = parser.GetGroup(option.Key);
+                foreach (var command in option.Value)
+                {
+                    // do not add option if option is null.
+                    if (command.Key != null)
+                    {
+                        group += command.Key;
+                    }
+
+                    // do not add command if command is null.
+                    if (command.Value != null)
+                    {
+                        group += command.Value;
+                    }
+                }
+
+                parser.Replace(new Dictionary<string, Group> { { group.GroupName, group }, });
+            }
+
+            return parser;
+        }
+
+        /// <summary>
+        /// Adds commands to the parser under a group with options in the group and in the commands.
+        /// </summary>
+        public static CommandParser operator +(CommandParser parser, Dictionary<string, Dictionary<Option, Dictionary<Command, Option>>> cmds)
+        {
+            // if "Global" command group does not exist.
+            if (parser.GetGroupIndex("Global") == -1)
+            {
+                parser.AddGroup(new Group("Global"));
+            }
+
+            foreach (var option in cmds)
+            {
+                if (parser.GetGroup(option.Key) == null)
+                {
+                    parser.AddGroup(new Group(option.Key));
+                }
+
+                var group = parser.GetGroup(option.Key);
+                foreach (var command in option.Value)
+                {
+                    // do not add option if option is null.
+                    if (command.Key != null)
+                    {
+                        group += command.Key;
+                    }
+
+                    // do not add command if command is null.
+                    if (command.Value != null)
+                    {
+                        foreach (var commandOption in command.Value)
+                        {
+                            group += commandOption.Key;
+                            var cmd = group.FindCommand(commandOption.Key.CommandSwitch);
+                            cmd += commandOption.Value;
+                        }
+                    }
+                }
+
                 parser.Replace(new Dictionary<string, Group> { { group.GroupName, group }, });
             }
 
@@ -103,7 +217,12 @@ namespace Newsmake
                         //     cmdgroup = cmd.Group.GroupName;
                         // }
                         /*else */
-                        if (/*cmd.Group != null && */group.CommandEquals(arg) && (group.GroupName.Equals(cmdgroup) || group.GroupName.Equals("Global")))
+                        if (group.GroupName.Equals(currentArg))
+                        {
+                            foundgrp = true;
+                            cmdgroup = group.GroupName;
+                        }
+                        else if (/*cmd.Group != null && */group.CommandEquals(arg) && (group.GroupName.Equals(cmdgroup) || group.GroupName.Equals("Global")))
                         {
                             foundcmd = true;
 
@@ -112,6 +231,17 @@ namespace Newsmake
                             var index = tmp.IndexOf(arg);
                             tmp.RemoveRange(0, index + 1);
                             group.FindCommand(arg).InvokeCommand(tmp.ToArray());
+                            tmp.Clear();
+                        }
+                        else if (group.OptionEquals(arg))
+                        {
+                            foundcmd = true;
+
+                            // now we got to filter the commands, stripping the ones already processed for passing to the invoked command.
+                            var tmp = this.args.ToList();
+                            var index = tmp.IndexOf(arg);
+                            tmp.RemoveRange(0, index + 1);
+                            group.FindOption(arg).InvokeOption(tmp.ToArray());
                             tmp.Clear();
                         }
                     }

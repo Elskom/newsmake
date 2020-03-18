@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018-2019, Els_kom org.
+﻿// Copyright (c) 2018-2020, Els_kom org.
 // https://github.com/Elskom/
 // All rights reserved.
 // license: GPL, see LICENSE for more details.
@@ -6,6 +6,8 @@
 namespace Newsmake
 {
     using System.Collections.Generic;
+    using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
 
     internal class Group
     {
@@ -20,15 +22,28 @@ namespace Newsmake
             {
                 this.Commands = new List<Command>();
             }
+
+            if (this.Options == null)
+            {
+                this.Options = new List<Option>();
+            }
         }
 
         internal string GroupName { get; private set; }
 
         internal List<Command> Commands { get; private set; }
 
+        internal List<Option> Options { get; private set; }
+
         public static Group operator +(Group group, Command cmd)
         {
             group.AddCommand(cmd);
+            return group;
+        }
+
+        public static Group operator +(Group group, Option opt)
+        {
+            group.AddOption(opt);
             return group;
         }
 
@@ -54,14 +69,39 @@ namespace Newsmake
             return null;
         }
 
+        internal Option FindOption(string optionName)
+        {
+            foreach (var option in this.Options)
+            {
+                if (option.Equals(optionName))
+                {
+                    return option;
+                }
+            }
+
+            return null;
+        }
+
         internal bool CommandEquals(string commandName)
             => this.FindCommand(commandName) != null;
+
+        internal bool OptionEquals(string optionName)
+            => this.FindOption(optionName) != null;
 
         private void AddCommand(Command cmd)
         {
             // important; set the group property value to this object.
             cmd.Group = this;
             this.Commands.Add(cmd);
+        }
+
+        private void AddOption(Option opt)
+        {
+            if (!opt.Equals(Option.NullOption) && !opt.Equals(Option.NullOption2))
+            {
+                opt.Group = this;
+                this.Options.Add(opt);
+            }
         }
 
         /*
