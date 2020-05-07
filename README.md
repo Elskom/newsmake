@@ -4,9 +4,8 @@
 
 News / changelog making tool.
 
-Current: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake)
-
-Master: [![Build status](https://ci.appveyor.com/api/projects/status/h93bwvkrh8cfvgde/branch/master?svg=true)](https://ci.appveyor.com/project/Elskom/newsmake/branch/master)
+![Build Status](https://github.com/Elskom/newsmake/workflows/.NET%20Core%20%28build%20%26%20publish%20release%29/badge.svg)
+![Build Status](https://github.com/Elskom/newsmake/workflows/.NET%20Core/badge.svg)
 
 To build:
 

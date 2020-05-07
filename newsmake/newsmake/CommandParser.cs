@@ -9,6 +9,7 @@ namespace Newsmake
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using newsmake.Properties;
 
     internal class CommandParser
     {
@@ -217,12 +218,12 @@ namespace Newsmake
                         //     cmdgroup = cmd.Group.GroupName;
                         // }
                         /*else */
-                        if (group.GroupName.Equals(currentArg))
+                        if (group.GroupName.Equals(currentArg, StringComparison.Ordinal))
                         {
                             foundgrp = true;
                             cmdgroup = group.GroupName;
                         }
-                        else if (/*cmd.Group != null && */group.CommandEquals(arg) && (group.GroupName.Equals(cmdgroup) || group.GroupName.Equals("Global")))
+                        else if (/*cmd.Group != null && */group.CommandEquals(arg) && (group.GroupName.Equals(cmdgroup, StringComparison.Ordinal) || group.GroupName.Equals("Global", StringComparison.Ordinal)))
                         {
                             foundcmd = true;
 
@@ -257,23 +258,23 @@ namespace Newsmake
         private void ShowHelp()
         {
             // thanks dotnet-cli for the idea of the help contents.
-            Console.WriteLine($"Version: {Assembly.GetEntryAssembly().GetName().Version}");
-            Console.WriteLine($"usage: {Assembly.GetEntryAssembly().GetName().Name} <command>");
+            Console.WriteLine(Resources.CommandParser_ShowHelp_Version, Assembly.GetEntryAssembly().GetName().Version);
+            Console.WriteLine(Resources.CommandParser_ShowHelp_usage, Assembly.GetEntryAssembly().GetName().Name);
             Console.WriteLine();
-            Console.WriteLine("Available commands:");
+            Console.WriteLine(Resources.CommandParser_ShowHelp_Available_commands);
             Console.WriteLine();
             foreach (var group in this.Groups)
             {
                 foreach (var cmd in group.Commands)
                 {
-                    Console.WriteLine($" {(group.GroupName.Equals("Global") ? string.Empty : group.GroupName + " ")}{cmd.CommandSwitch}\t{cmd.CommandDescription}");
+                    Console.WriteLine(Resources.CommandParser_ShowHelp, group.GroupName.Equals("Global", StringComparison.Ordinal) ? string.Empty : group.GroupName + " ", cmd.CommandSwitch, cmd.CommandDescription);
                     Console.WriteLine();
                 }
             }
 
             if (this.HasDocs)
             {
-                Console.WriteLine($"For more information, visit {this.DocsUrl}");
+                Console.WriteLine(Resources.CommandParser_ShowHelp_For_more_information__visit, this.DocsUrl);
             }
         }
 
@@ -281,7 +282,7 @@ namespace Newsmake
         {
             foreach (var group in this.Groups)
             {
-                if (group.GroupName.Equals(groupName))
+                if (group.GroupName.Equals(groupName, StringComparison.Ordinal))
                 {
                     return group;
                 }
@@ -294,13 +295,13 @@ namespace Newsmake
         {
             foreach (var group in this.Groups)
             {
-                if (group.GroupName.Equals(groupName))
+                if (group.GroupName.Equals(groupName, StringComparison.Ordinal))
                 {
                     return this.Groups.IndexOf(group);
                 }
             }
 
-            return -1; // to be consistant with IndexOf()!!!
+            return -1; // to be consistent with IndexOf()!!!
         }
 
         private void AddGroup(Group group)

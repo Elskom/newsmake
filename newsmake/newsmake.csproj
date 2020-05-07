@@ -29,6 +29,8 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
     <IncludeSymbols>true</IncludeSymbols>
+    <!-- Optional: Include source code in the symbol package (.snupkg) -->
+    <IncludeSource>true</IncludeSource>
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
@@ -37,20 +39,29 @@
     <Compile Remove="test\**" />
     <EmbeddedResource Remove="test\**" />
     <None Remove="test\**" />
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <OutputPath>bin\Any CPU\Debug\</OutputPath>
     <DocumentationFile>bin\Any CPU\$(Configuration)\newsmake.xml</DocumentationFile>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>bin\Any CPU\Release\</OutputPath>
     <DocumentationFile>bin\Any CPU\$(Configuration)\newsmake.xml</DocumentationFile>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
@@ -63,7 +74,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0-beta1.20255.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -99,11 +110,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj" Condition="Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj') AND '$(SolutionName)' == 'build_all_packages'" />
     <PackageReference Include="AraHaan.GitInformation" Condition="!Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj') OR '$(SolutionName)' != 'build_all_packages'">
-      <Version>1.0.1</Version>
+      <Version>1.0.2-preview-97608530</Version>
     </PackageReference>
     <ProjectReference Include="../../MiniDump/MiniDump.csproj" Condition="Exists('../../MiniDump/MiniDump.csproj') AND '$(SolutionName)' == 'build_all_packages'" />
     <PackageReference Include="MiniDump" Condition="!Exists('../../MiniDump/MiniDump.csproj') OR '$(SolutionName)' != 'build_all_packages'">
-      <Version>1.0.3</Version>
+      <Version>1.0.3-preview-97732731</Version>
     </PackageReference>
   </ItemGroup>
 

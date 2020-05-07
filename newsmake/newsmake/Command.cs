@@ -7,6 +7,7 @@ namespace Newsmake
 {
     using System;
     using System.Collections.Generic;
+    using newsmake.Properties;
 
     internal class Command
     {
@@ -17,10 +18,6 @@ namespace Newsmake
             this.CommandSwitch = commandSwitch;
             this.CommandDescription = commandDescr;
             this.commandCode = commandCode;
-        }
-
-        private Command()
-        {
         }
 
         internal Group Group { get; set; }
@@ -38,7 +35,7 @@ namespace Newsmake
         }
 
         internal bool Equals(string value)
-            => this.CommandSwitch != null ? this.CommandSwitch.Equals(value) : false;
+            => this.CommandSwitch?.Equals(value, StringComparison.Ordinal) ?? false;
 
         internal void InvokeCommand(string[] commands)
         {
@@ -48,7 +45,7 @@ namespace Newsmake
             }
             else
             {
-                throw new InvalidOperationException("Calling InvokeCommand on a object with no code to invoke.");
+                throw new InvalidOperationException(Resources.InvokeOption_Calling_InvokeCommand_on_a_object_with_no_code);
             }
         }
 

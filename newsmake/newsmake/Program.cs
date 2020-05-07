@@ -20,7 +20,8 @@ namespace Newsmake
             MiniDump.DumpMessage += MiniDump_DumpMessage;
             _ = Assembly.GetEntryAssembly().EntryPoint.GetCustomAttributes(false);
             var commandParser = new CommandParser(args);
-            Func<string[], object> func = (commands) => {
+            Func<string[], object> func = (commands) =>
+            {
                 Commands.VersionCommand();
                 return null;
             };
@@ -37,7 +38,7 @@ namespace Newsmake
         private static void MiniDump_DumpMessage(object sender, MessageEventArgs e)
         {
             Console.WriteLine($"{e.Caption}: {e.Text}");
-            if (!e.Text.StartsWith("Mini-dumping failed with Code: "))
+            if (!e.Text.StartsWith("Mini-dumping failed with Code: ", StringComparison.Ordinal))
             {
                 Environment.Exit(1);
             }

@@ -18,10 +18,6 @@ namespace Newsmake
             this.optionCode = optionCode;
         }
 
-        private Option()
-        {
-        }
-
         internal static Option NullOption { get; } = new Option(string.Empty, string.Empty, null);
 
         internal static Option NullOption2 { get; } = new Option(string.Empty, string.Empty, null);
@@ -34,13 +30,13 @@ namespace Newsmake
 
         internal object Result { get; private set; }
 
-        internal bool Equals(string value) => !string.IsNullOrEmpty(this.OptionSwitch) ? this.OptionSwitch.Equals(value) : false;
+        internal bool Equals(string value) => !string.IsNullOrEmpty(this.OptionSwitch) && this.OptionSwitch.Equals(value, StringComparison.Ordinal);
 
         internal bool Equals(Option value)
         {
             if (string.IsNullOrEmpty(this.OptionSwitch) && string.IsNullOrEmpty(this.OptionDescription) && this.optionCode == null)
             {
-                if (this.Equals(value.OptionSwitch) && this.OptionDescription.Equals(value.OptionDescription) && this.optionCode == value.optionCode)
+                if (this.Equals(value.OptionSwitch) && this.OptionDescription.Equals(value.OptionDescription, StringComparison.Ordinal) && this.optionCode == value.optionCode)
                 {
                     return true;
                 }
@@ -60,7 +56,7 @@ namespace Newsmake
                 }
                 else
                 {
-                    throw new InvalidOperationException("Calling InvokeCommand on a object with no code to invoke.");
+                    throw new InvalidOperationException(newsmake.InvokeOption_Calling_InvokeCommand_on_a_object_with_no_code);
                 }
             }
         }

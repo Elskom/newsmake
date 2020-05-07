@@ -11,11 +11,12 @@ namespace Newsmake
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using newsmake.Properties;
 
     internal static class Commands
     {
         internal static void VersionCommand()
-            => Console.WriteLine($"Version: {Assembly.GetEntryAssembly().GetName().Version}");
+            => Console.WriteLine(Resources.CommandParser_ShowHelp_Version, Assembly.GetEntryAssembly().GetName().Version);
 
         internal static void BuildCommand()
         {
@@ -31,10 +32,10 @@ namespace Newsmake
             var section_data = new List<string>();
             foreach (var p in Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories))
             {
-                if (p.EndsWith(ext))
+                if (p.EndsWith(ext, StringComparison.Ordinal))
                 {
                     found_master_file = true;
-                    Console.WriteLine($"Processing {p}...");
+                    Console.WriteLine(Resources.Commands_BuildCommand_Processing, p);
 
                     // set the current directory to p.
                     Directory.SetCurrentDirectory(new FileInfo(p).Directory.FullName);
@@ -43,14 +44,14 @@ namespace Newsmake
                     {
                         // a hack to make this all work as intended.
                         var line = master_file[i];
-                        if (!line.Contains("# "))
+                        if (!line.Contains("# ", StringComparison.Ordinal))
                         {
                             do
                             {
                                 // get environment variable name.
                                 // find the "$(" and make a substring then find the first ")"
-                                var env_open = line.IndexOf("$(");
-                                var env_close = line.IndexOf(")");
+                                var env_open = line.IndexOf("$(", StringComparison.Ordinal);
+                                var env_close = line.IndexOf(")", StringComparison.Ordinal);
                                 if (env_open != env_close)
                                 {
                                     env_open += 2;
@@ -58,71 +59,71 @@ namespace Newsmake
                                     var envvalue = Environment.GetEnvironmentVariable(envvar);
 
                                     // a hack to resolve the current working directory manually...
-                                    if (envvar.Equals("CD") || envvar.Equals("cd"))
+                                    if (envvar.Equals("CD", StringComparison.Ordinal) || envvar.Equals("cd", StringComparison.Ordinal))
                                     {
-                                        envvalue = Directory.GetCurrentDirectory().ToString();
+                                        envvalue = Directory.GetCurrentDirectory();
                                         envvalue += "/";
-                                        envvalue = envvalue.Replace("\\", "/");
+                                        envvalue = envvalue.Replace("\\", "/", StringComparison.Ordinal);
                                         env_open -= 2;
-                                        line = line.Replace(line.Substring(env_open, (env_close + 1) - env_open), envvalue);
+                                        line = line.Replace(line.Substring(env_open, (env_close + 1) - env_open), envvalue, StringComparison.Ordinal);
                                     }
                                     else if (envvalue != null)
                                     {
                                         env_open -= 2;
-                                        line = line.Replace(line.Substring(env_open, (env_close + 1) - env_open), envvalue);
+                                        line = line.Replace(line.Substring(env_open, (env_close + 1) - env_open), envvalue, StringComparison.Ordinal);
                                     }
                                     else
                                     {
-                                        Console.Error.WriteLine("Fatal: Environment variable does not exist.");
+                                        Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__Environment_variable_does_not_exist);
                                         Environment.Exit(1);
                                     }
                                 }
                             }
-                            while (line.Contains("$("));
+                            while (line.Contains("$(", StringComparison.Ordinal));
 
-                            if (line.Contains("projname = \""))
+                            if (line.Contains("projname = \"", StringComparison.Ordinal))
                             {
                                 project_name = line;
-                                project_name = project_name.Replace(project_name.Substring(0, 12), string.Empty);
-                                project_name = project_name.Replace(project_name.Substring(project_name.Length - 1, 1), string.Empty);
+                                project_name = project_name.Replace(project_name.Substring(0, 12), string.Empty, StringComparison.Ordinal);
+                                project_name = project_name.Replace(project_name.Substring(project_name.Length - 1, 1), string.Empty, StringComparison.Ordinal);
                             }
-                            else if (!line.Contains("projname = \"") && project_name.Equals(string.Empty))
+                            else if (!line.Contains("projname = \"", StringComparison.Ordinal) && string.IsNullOrEmpty(project_name))
                             {
-                                Console.Error.WriteLine("Fatal: Project name not set.");
+                                Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__Project_name_not_set);
                                 Environment.Exit(1);
                             }
-                            else if (line.Contains("devmode = "))
+                            else if (line.Contains("devmode = ", StringComparison.Ordinal))
                             {
-                                devmode = line.Equals("devmode = true");
+                                devmode = line.Equals("devmode = true", StringComparison.Ordinal);
                             }
-                            else if (line.Contains("genfilename = \""))
+                            else if (line.Contains("genfilename = \"", StringComparison.Ordinal))
                             {
                                 outputfile_name = line;
-                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(0, 15), string.Empty);
-                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(outputfile_name.Length - 1, 1), string.Empty);
+                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(0, 15), string.Empty, StringComparison.Ordinal);
+                                outputfile_name = outputfile_name.Replace(outputfile_name.Substring(outputfile_name.Length - 1, 1), string.Empty, StringComparison.Ordinal);
                             }
-                            else if (!line.Contains("genfilename = \"") && outputfile_name.Equals(string.Empty))
+                            else if (!line.Contains("genfilename = \"", StringComparison.Ordinal) && string.IsNullOrEmpty(outputfile_name))
                             {
-                                Console.Error.WriteLine("Fatal: generated output file name not set.");
+                                Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__generated_output_file_name_not_set);
                                 Environment.Exit(1);
                             }
-                            else if (line.Contains("tabs = "))
+                            else if (line.Contains("tabs = ", StringComparison.Ordinal))
                             {
-                                tabs = line.Equals("tabs = true");
+                                tabs = line.Equals("tabs = true", StringComparison.Ordinal);
                             }
-                            else if (line.Contains("deletechunkentryfiles = "))
+                            else if (line.Contains("deletechunkentryfiles = ", StringComparison.Ordinal))
                             {
-                                delete_files = !devmode ? line.Equals("deletechunkentryfiles = true") : false;
+                                delete_files = !devmode ? line.Equals("deletechunkentryfiles = true", StringComparison.Ordinal) : false;
                             }
-                            else if (line.Contains("outputasmd = "))
+                            else if (line.Contains("outputasmd = ", StringComparison.Ordinal))
                             {
-                                output_format_md = line.Equals("outputasmd = true");
+                                output_format_md = line.Equals("outputasmd = true", StringComparison.Ordinal);
                             }
-                            else if (line.Contains("import \""))
+                            else if (line.Contains("import \"", StringComparison.Ordinal))
                             {
                                 var imported_folder = line;
-                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty);
-                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty, StringComparison.Ordinal);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty, StringComparison.Ordinal);
                                 var section_string = string.Empty;
                                 if (first_import)
                                 {
@@ -167,7 +168,7 @@ namespace Newsmake
                                     }
                                 }
 
-                                if (delete_files && !section_text.Equals(string.Empty))
+                                if (delete_files && !string.IsNullOrEmpty(section_text))
                                 {
                                     // save section text and then delete the folder.
                                     using (var section_file = File.OpenWrite(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section"))
@@ -183,7 +184,7 @@ namespace Newsmake
                                     Directory.Delete(Directory.GetCurrentDirectory() + "/" + imported_folder);
                                 }
 
-                                if (section_text.Equals(string.Empty))
+                                if (string.IsNullOrEmpty(section_text))
                                 {
                                     // load saved *.section file.
                                     if (File.Exists(Directory.GetCurrentDirectory() + "/" + imported_folder + ".section"))
@@ -198,7 +199,7 @@ namespace Newsmake
                         }
                     }
 
-                    if (!outputfile_name.Equals(string.Empty))
+                    if (!string.IsNullOrEmpty(outputfile_name))
                     {
                         var finfo = new FileInfo(outputfile_name);
                         if (!finfo.Directory.Exists)
@@ -214,7 +215,7 @@ namespace Newsmake
                             }
                         }
 
-                        Console.WriteLine($"Successfully Generated '{outputfile_name}'.");
+                        Console.WriteLine(Resources.Commands_BuildCommand_Successfully_Generated, outputfile_name);
 
                         // clear leaking any specific information to other *.master file configurations that should not be present.
                         project_name = string.Empty;
@@ -231,7 +232,7 @@ namespace Newsmake
 
             if (!found_master_file)
             {
-                Console.Error.WriteLine("Fatal: no *.master file found.");
+                Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__no___master_file_found);
                 Environment.Exit(1);
             }
         }
@@ -246,7 +247,7 @@ namespace Newsmake
                 var masterfile = string.Empty;
                 foreach (var p in Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories))
                 {
-                    if (p.EndsWith(ext))
+                    if (p.EndsWith(ext, StringComparison.Ordinal))
                     {
                         var fi = new FileInfo(p);
                         path = fi.Directory.FullName;
@@ -258,7 +259,7 @@ namespace Newsmake
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    Console.Error.WriteLine("Fatal: no *.master file found.");
+                    Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__no___master_file_found);
                     Environment.Exit(1);
                 }
 
@@ -280,11 +281,11 @@ namespace Newsmake
                     foreach (var line in lines)
                     {
                         linecnt++;
-                        if (line.Contains("import \"") && !line.Contains($"import \"{args[0]}\""))
+                        if (line.Contains("import \"", StringComparison.Ordinal) && !line.Contains($"import \"{args[0]}\"", StringComparison.Ordinal))
                         {
                             break;
                         }
-                        else if (line.Contains($"import \"{args[0]}\""))
+                        else if (line.Contains($"import \"{args[0]}\"", StringComparison.Ordinal))
                         {
                             Console.Error.WriteLine($"Fatal: The import of the release '{args[0]}' already exists in the *.master file.");
                             Environment.Exit(1);
@@ -315,7 +316,7 @@ namespace Newsmake
             var path = string.Empty;
             foreach (var p in Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories))
             {
-                if (p.EndsWith(ext))
+                if (p.EndsWith(ext, StringComparison.Ordinal))
                 {
                     var fi = new FileInfo(p);
                     path = fi.Directory.FullName;
@@ -325,7 +326,7 @@ namespace Newsmake
 
             if (string.IsNullOrEmpty(path))
             {
-                Console.Error.WriteLine("Fatal: no *.master file found.");
+                Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__no___master_file_found);
                 Environment.Exit(1);
             }
 
@@ -367,7 +368,7 @@ namespace Newsmake
                     newfileCountStr = $"{newfileCount}";
                 }
 
-                var newFile = $"{currentFile.Replace($"item{fileCountStr}", $"item{newfileCountStr}")}";
+                var newFile = $"{currentFile.Replace($"item{fileCountStr}", $"item{newfileCountStr}", StringComparison.Ordinal)}";
                 using (File.Create(newFile))
                 {
                 }
@@ -382,7 +383,7 @@ namespace Newsmake
             var found = false;
             foreach (var p in Directory.GetFiles(Directory.GetCurrentDirectory(), "*", SearchOption.AllDirectories))
             {
-                if (p.EndsWith(ext))
+                if (p.EndsWith(ext, StringComparison.Ordinal))
                 {
                     found = true;
                     var fi = new FileInfo(p);
@@ -391,21 +392,21 @@ namespace Newsmake
                     {
                         // a hack to make this all work as intended.
                         var line = master_file[i];
-                        if (!line.Contains("# "))
+                        if (!line.Contains("# ", StringComparison.Ordinal))
                         {
-                            if (line.Contains("tabs = "))
+                            if (line.Contains("tabs = ", StringComparison.Ordinal))
                             {
-                                tabs = line.Equals("tabs = true");
+                                tabs = line.Equals("tabs = true", StringComparison.Ordinal);
                             }
-                            else if (line.Contains("outputasmd = "))
+                            else if (line.Contains("outputasmd = ", StringComparison.Ordinal))
                             {
-                                output_format_md = line.Equals("outputasmd = true");
+                                output_format_md = line.Equals("outputasmd = true", StringComparison.Ordinal);
                             }
-                            else if (line.Contains("import \""))
+                            else if (line.Contains("import \"", StringComparison.Ordinal))
                             {
                                 var imported_folder = line;
-                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty);
-                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(0, 8), string.Empty, StringComparison.Ordinal);
+                                imported_folder = imported_folder.Replace(imported_folder.Substring(imported_folder.Length - 1, 1), string.Empty, StringComparison.Ordinal);
                                 var section_text = string.Empty;
                                 if (Directory.Exists($"{fi.Directory.FullName}{Path.DirectorySeparatorChar}{imported_folder}"))
                                 {
@@ -425,7 +426,7 @@ namespace Newsmake
                                     }
                                 }
 
-                                if (!section_text.Equals(string.Empty))
+                                if (!string.IsNullOrEmpty(section_text))
                                 {
                                     // save section text and then delete the folder.
                                     using (var section_file = File.OpenWrite($"{fi.Directory.FullName}{Path.DirectorySeparatorChar}{imported_folder}.section"))
@@ -448,7 +449,7 @@ namespace Newsmake
 
             if (!found)
             {
-                Console.Error.WriteLine("Fatal: no *.master file found.");
+                Console.Error.WriteLine(Resources.Commands_BuildCommand_Fatal__no___master_file_found);
                 Environment.Exit(1);
             }
         }
@@ -460,7 +461,7 @@ namespace Newsmake
                 return;
             }
 
-            var indent = !output_format_md ? (tabs ? "\t\t" : "        ") : (tabs ? "\t" : "    ");
+            var indent = !output_format_md ? tabs ? "\t\t" : "        " : tabs ? "\t" : "    ";
             var tab_length = 8;
             var indent_line_length = line_length;
             var pos = 0;
@@ -470,7 +471,7 @@ namespace Newsmake
             {
                 if (pos > 0 && last_pos == pos)
                 {
-                    throw new Exception("bug");
+                    throw new Exception(Resources.Commands_Formatline_bug);
                 }
 
                 last_pos = pos;

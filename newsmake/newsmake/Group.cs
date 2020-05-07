@@ -6,8 +6,6 @@
 namespace Newsmake
 {
     using System.Collections.Generic;
-    using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
 
     internal class Group
     {
