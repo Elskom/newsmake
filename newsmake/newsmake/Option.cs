@@ -6,6 +6,7 @@
 namespace Newsmake
 {
     using System;
+    using newsmake.Properties;
 
     internal class Option
     {
@@ -56,7 +57,7 @@ namespace Newsmake
                 }
                 else
                 {
-                    throw new InvalidOperationException(newsmake.InvokeOption_Calling_InvokeCommand_on_a_object_with_no_code);
+                    throw new InvalidOperationException(Resources.InvokeOption_Calling_InvokeCommand_on_a_object_with_no_code);
                 }
             }
         }
