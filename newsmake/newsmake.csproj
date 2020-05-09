@@ -110,7 +110,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj" Condition="Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj') AND '$(SolutionName)' == 'build_all_packages'" />
     <PackageReference Include="AraHaan.GitInformation" Condition="!Exists('..\..\GitInformation\src\GitInformation\AraHaan.GitInformation.csproj') OR '$(SolutionName)' != 'build_all_packages'">
-      <Version>1.0.2-preview-97992797</Version>
+      <Version>1.0.2-preview-98929471</Version>
     </PackageReference>
     <ProjectReference Include="../../MiniDump/MiniDump.csproj" Condition="Exists('../../MiniDump/MiniDump.csproj') AND '$(SolutionName)' == 'build_all_packages'" />
     <PackageReference Include="MiniDump" Condition="!Exists('../../MiniDump/MiniDump.csproj') OR '$(SolutionName)' != 'build_all_packages'">
