@@ -114,7 +114,7 @@
     </PackageReference>
     <ProjectReference Include="../../MiniDump/MiniDump.csproj" Condition="Exists('../../MiniDump/MiniDump.csproj') AND '$(SolutionName)' == 'build_all_packages'" />
     <PackageReference Include="MiniDump" Condition="!Exists('../../MiniDump/MiniDump.csproj') OR '$(SolutionName)' != 'build_all_packages'">
-      <Version>1.0.3-preview-99629199</Version>
+      <Version>1.0.3-preview-99794393</Version>
     </PackageReference>
   </ItemGroup>
 
