@@ -24,7 +24,7 @@ namespace Newsmake
         public int Length
             => this.args.Length;
 
-        public bool HasDocs { get; set; } = false;
+        public bool HasDocs { get; set; }
 
         public string DocsUrl { get; set; } = string.Empty;
 
