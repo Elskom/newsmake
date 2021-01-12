@@ -11,10 +11,10 @@
     <Authors>Els_kom org.</Authors>
     <PackageTags>newsmake</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Elskom/newsmake/</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Elskom/newsmake/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Elskom/Sdk/</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Elskom/Sdk/</PackageProjectUrl>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Copyright>Copyright (c) 2018-2019</Copyright>
+    <Copyright>Copyright (c) 2018-2021</Copyright>
     <Description>News / changelog making tool.</Description>
     <PackageReleaseNotes>Actually fixed the substring bug which caused crashes.</PackageReleaseNotes>
     <Version>1.0.5</Version>
@@ -23,6 +23,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Elskom.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <PackageOutputPath Condition="'$(SolutionName)' == 'build_all_packages'">$(MSBuildThisFileDirectory)..\artifacts\</PackageOutputPath>
     <!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -86,10 +90,6 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.164">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="IDisposableAnalyzers" Version="3.4.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
